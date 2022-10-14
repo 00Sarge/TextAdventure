@@ -33,7 +33,11 @@ class char:
         return f"{self.race}()"
     def selectThings(self):
         if self.race == "Warrior":
-          print("warrior")
+          weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
+          weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
+          choice = int(input(f"Choose your weapon {weapons}:  "))
+          self.weapon = Weapon(choice)
+
         #Reminder here to make the stats become modified based on what equipment is selected
         #and that equipment can return as a string so that it can be output in descriptions.
           quit() 
