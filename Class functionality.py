@@ -2,11 +2,11 @@ import random
 from enum import Enum
 
 #Lists for potential inventory systems
-Weapon = Enum("Weapon", "Long Sword, Greataxe, Spear")
-Spells = Enum("Spells", "Fireball, Ice storm, Lightning bolt")
-Tools = Enum("Tools", "Lockpick, Grappling Hook, " )
-physDefense = Enum("physDefense","Shield, Chain mail, Cloak")
-magDefense = Enum("magDefense","Magic shield, Ring of protection, Counterspell")
+Weapon = Enum("Weapon", "LongSword, Greataxe, Spear")
+Spell = Enum("Spells", "Fireball, Ice storm, Lightning bolt")
+Tool = Enum("Tools", "Lockpick, Grappling Hook, " )
+Shield = Enum("Defense","Shield, Chain mail, Cloak")
+Resistance = Enum("Resistance","Magic shield, Ring of protection, Counterspell")
 
 def checkForDead():
   if player.hp <= 0:
@@ -26,9 +26,10 @@ class char:
         self.intelligence = intelligence
         self.wisdom = wisdom
         self.weapon = None
-        self.defense = None
-        self.tools = None
-        self.spells = None
+        self.shield = None
+        self.tool = None
+        self.spell = None
+        self.resistance = None
     def __str__(self):
         return f"{self.race}()"
     def selectThings(self):
@@ -37,16 +38,33 @@ class char:
           weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
           choice = int(input(f"Choose your weapon {weapons}:  "))
           self.weapon = Weapon(choice)
-
+          shields = [f"{shield.value}-{shield.name}" for shield in Shield]
+          shields = ", ".join(shields[:-1]) + " or " + shields[-1]
+          choice = int(input(f"Choose your shield {shields}:  "))
+          self.shield = Shield(choice)
+          print("Excellent selection, Sir")
         #Reminder here to make the stats become modified based on what equipment is selected
-        #and that equipment can return as a string so that it can be output in descriptions.
-          quit() 
+        #and that equipment can return as a string so that it can be output in descriptions. 
         elif self.race == "Wizard":
-
-          quit() 
-
+          spells = [f"{spell.value}-{spell.name}" for spell in Spell]
+          spells = ", ".join(spells[:-1]) + " or " + spells[-1]
+          choice = int(input(f"Choose your weapon {spells}:  "))
+          self.spell = Spell(choice)
+          resistances = [f"{resistance.value}-{resistance.name}" for resistance in Resistance]
+          resistances = ", ".join(resistances[:-1]) + " or " + resistances[-1]
+          choice = int(input(f"Choose your shield {resistances}:  "))
+          self.resistance = Resistance(choice)
+          print("May your magic burn bright")
         elif self.race == "Rogue":
-          quit()
+          weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
+          weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
+          choice = int(input(f"Choose your weapon {weapons}:  "))
+          self.weapon = Weapon(choice)
+          tools = [f"{tool.value}-{tool.name}" for tool in Tools]
+          tools = ", ".join(tools[:-1]) + " or " + tools[-1]
+          choice = int(input(f"Choose your shield {tools}:  "))
+          self.resistance = Tool(choice)
+          print("Happy Hunting")
 
     
 #same as the above character template but for monsters
@@ -77,6 +95,7 @@ def playeracterSelect():
       playerStart()
     elif userInput == "Warrior":
       player = char('Warrior', 15, 18, 12, 4, 8, 3)
+      player.selectThings() 
       playerStart()
     else: 
       print("Please enter a valid option.")
