@@ -64,7 +64,7 @@ class char:
           tools = ", ".join(tools[:-1]) + " or " + tools[-1]
           choice = int(input(f"Choose your shield {tools}:  "))
           self.resistance = Tool(choice)
-          print("Happy Hunting")
+          print("Happy hunting")
 
     
 #same as the above character template but for monsters
