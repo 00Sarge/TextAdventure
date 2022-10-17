@@ -6,7 +6,7 @@ Weapon = Enum("Weapon", "LongSword, Greataxe, Spear")
 Spell = Enum("Spells", "Fireball, Ice storm, LightningBolt")
 Tool = Enum("Tools", "Lockpick, Grappling Hook, " )
 Shield = Enum("Defense","Shield, Chain mail, Cloak")
-Resistance = Enum("Resistance","Magic shield, Ring of protection, Counterspell")
+Resistance = Enum("Resistance","MagicShield, RingOfProtection, Counterspell")
 
 def checkForDead():
   if player.hp <= 0:
@@ -60,7 +60,7 @@ class char:
           weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
           choice = int(input(f"Choose your weapon {weapons}:  "))
           self.weapon = Weapon(choice)
-          tools = [f"{tool.value}-{tool.name}" for tool in Tools]
+          tools = [f"{tool.value}-{tool.name}" for tool in Tool]
           tools = ", ".join(tools[:-1]) + " or " + tools[-1]
           choice = int(input(f"Choose your shield {tools}:  "))
           self.resistance = Tool(choice)
@@ -131,12 +131,7 @@ def ghoulGames():
     print("Options: Play along/Fight the ghoul/Turn and run")
     userInput = input()
     if userInput == "Fight the ghoul":
-      if player.race == "Wizard":
-        wizardVsGhoul()
-      elif player.race == "Rogue":
-        rogueVsGhoul()
-      elif player.race == "Warrior":
-        warriorVsGhoul()  
+      VsGhoul() 
     elif userInput == "Play along":
       if player.dexterity >= 16 or player.strength >= 16:
         print("Thanks to your athletcism you manage to duck, dodge, and weave through the obstacles")
