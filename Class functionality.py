@@ -3,7 +3,7 @@ from enum import Enum
 
 #Lists for potential inventory systems
 Weapon = Enum("Weapon", "LongSword, Greataxe, Spear")
-Spell = Enum("Spells", "Fireball, Ice storm, Lightning bolt")
+Spell = Enum("Spells", "Fireball, Ice storm, LightningBolt")
 Tool = Enum("Tools", "Lockpick, Grappling Hook, " )
 Shield = Enum("Defense","Shield, Chain mail, Cloak")
 Resistance = Enum("Resistance","Magic shield, Ring of protection, Counterspell")
@@ -103,6 +103,7 @@ def playeracterSelect():
 def playerStart():
   actions = ["Left","Right","Forward"]
   print("You begin in a dusty room made of cobbled stone. There are 3 paths.")
+  player.selectThings()
   userInput = ""
   while userInput not in actions:
     print("Options: Left/Right/Forward")
