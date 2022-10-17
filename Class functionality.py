@@ -3,8 +3,8 @@ from enum import Enum
 
 #Lists for potential inventory systems
 Weapon = Enum("Weapon", "LongSword, Greataxe, Spear")
-Spell = Enum("Spells", "Fireball, Ice storm, LightningBolt")
-Tool = Enum("Tools", "Lockpick, Grappling Hook, " )
+Spell = Enum("Spells", "Fireball, IceStorm, LightningBolt")
+Tool = Enum("Tools", "Lockpick, GrapplingHook, " )
 Shield = Enum("Defense","Shield, Chain mail, Cloak")
 Resistance = Enum("Resistance","MagicShield, RingOfProtection, Counterspell")
 
@@ -174,8 +174,29 @@ def longHallway():
       print("""As you walk down the hallway you can't help but feel like the air clings to you in an unnatural way,
       making the air itself feel thick and oily. Upon reaching the door you realize it's even larger than you initially thought.
       The door is easily over 9ft tall and the locks are rusted over. Theres a series of claw marks on the sarrounding floor and walls. """)
-      
-    quit()
+      print("Options: Open the door/Back away")
+      theBeast()
+    elif userInput == "Investigate the walls":
+      print("""As you approach the wall you begin to hear whispering from the edges of your vision, 
+      it's almost as though some unseen force is laughing at you. Now that the writing comes into focus it takes
+      nearly all your willpower to to stay focused on the swirling caligraphy of the text as the laughing gets louder.
+      It's beginning to sound like you yourself are also laughing.""")
+      if player.intelligence >= 18:
+        print("Because of your rigorous mental training you find yourself able to fight through the laughter and find your own mental voice.")
+        print("""You make out the text "Here, imprisoned, lies Krushok, Firstborn Tyrant of the Moon" underneath seems to be inscribed some kind of spell
+        "Ecliptic beam" """)
+        player.spell = "EclipticBeam"
+      else:
+        print("""As you get within range of touching the wall the voices grow so loud that they begin to drown out your thoughts
+        until all you can experience is the mania that rolls over you. You stumble into the wall and hit your head on the stone, knocking yourself out.
+        When you come too it the wall seems perfectly mundane and you can't see any writing. You feel like a bit os sanity has left your body but 
+        perhaps you gained a bit of knowledge. As you walk away from the wall you begin to hear the whispers again...""")
+        player.wisdom = player.wisdom - 2
+        player.intelligence = player.intelligence + 1
+        player.hp = player.hp - 2
+        longHallway()
+    else:
+      print("Please enter a valid option")
 
 if __name__ == "__main__":
     
