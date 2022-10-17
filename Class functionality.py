@@ -102,8 +102,8 @@ def playeracterSelect():
 
 def playerStart():
   actions = ["Left","Right","Forward"]
-  print("You begin in a dusty room made of cobbled stone. There are 3 paths.")
   player.selectThings()
+  print("You begin in a dusty room made of cobbled stone. There are 3 paths.")
   userInput = ""
   while userInput not in actions:
     print("Options: Left/Right/Forward")
@@ -154,19 +154,28 @@ def ghoulGames():
         print("'Bah, what a poor showing. You must die for wasting my audience's valuable time'")
         player.hp = player.hp - 2
         checkForDead()
-        if player.race == "Wizard":
-          wizardVsGhoul()
-        elif player.race == "Rogue":
-          rogueVsGhoul()
-        elif player.race == "Warrior":
-          warriorVsGhoul()  
+        VsGhoul() 
     elif userInput == "Turn and run":
       print("You find the door has slammed closed behind you")
       ghoulGames()
     else: 
       print("Please enter a valid option.")
 
-
+def longHallway(): 
+  actions = ["Approach the door","Investigate the walls","Turn and run"]
+  print("You step into a long hallway, dimly lit and dank. The walls seems to covered in a scrawl that looks like a language, though not one that you know")
+  print("At the end of the hallway you see a tall door carved of ebony.")
+  print("The door is covered in latches and locks on your side... meaning there must have been or may still be something trapped in there")
+  userInput = ""
+  while userInput not in actions:
+    print("Options: Approach the Door/Investigate the walls/Turn and run")
+    userInput = input()
+    if userInput == "Approach the door":
+      print("""As you walk down the hallway you can't help but feel like the air clings to you in an unnatural way,
+      making the air itself feel thick and oily. Upon reaching the door you realize it's even larger than you initially thought.
+      The door is easily over 9ft tall and the locks are rusted over. Theres a series of claw marks on the sarrounding floor and walls. """)
+      
+    quit()
 
 if __name__ == "__main__":
     
