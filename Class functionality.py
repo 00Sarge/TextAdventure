@@ -1,4 +1,5 @@
-import random 
+
+import random
 from enum import Enum
 
 #Lists for potential inventory systems
@@ -72,8 +73,6 @@ class char:
           self.tool = Tool(choice)
           self.dmg = self.dmg + self.dexterity
           print("Happy hunting")
-
-    
 #same as the above character template but for monsters
 class monster:
     def __init__(self, name, hp, damage, weakness, blockedBy):
@@ -83,32 +82,45 @@ class monster:
         self.weakness = weakness
         self.blockedBy = blockedBy 
     def __str__(self):
-        return f"{self.race}()"
+        return f"{self.name}{self.weakness}{self.blockedBy}()"
  #First attempts at making a combat system, make dmg a variable thats set in classes and then modified based off of stats.Give weapons a strength to match weaknesses      
 class combat:
   def __init__(self):
     self.round = 0
-    self.gameOver = False 
+    self.gameOver = False
+    self.playerDmg = 0
+    self.opponentDmg = 0 
   def newRound(self):
     self.round += 1
     print(f"\n***   Round: {self.round}   ***\n") 
-  def checkWin(self, opponent):
+  def checkWin(self,player, opponent):
     if opponent.hp <= 0:
+      self.gameOver = True
       print("You win")
+    elif player.health <= 0:
+      print("You have died")
+      quit()
   def takeTurn(self,player,opponent):
     if player.weapon or player.spell in opponent.weakness:
-      opponent.hp = opponent.hp - (player.dmg + random.randint(1,10))*2
+      self.playerDmg = (player.dmg+ random.randint(1,10))*2
+      opponent.hp = opponent.hp - self.playerDmg
       print(f"Critical Hit! This monster seems weak to your attacks")
     else:
-      opponent.hp = opponent.hp - (player.dmg+ random.randint(1,10))
+      self.playerDmg = (player.dmg+ random.randint(1,10))
+      opponent.hp = opponent.hp - self.playerDmg
       print(f"Solid dmg")
   def monsterTurn(self,player,opponent):
     if player.defense or player.resistance in opponent.blockedBy:
       print("Your defenses seem particularly strong against this creature")
-      player.health = player.health - (opponent.damage + random.randint(1,10))/2
+      self.opponentDmg = (opponent.damage + random.randint(1,10))/2
+      player.health = player.health - self.opponentDmg
     else:
       print("You take a solid hit")
-      player.health = player.health - (opponent.damage+ random.randint(1,10))
+      self.opponentDmg = (opponent.damage + random.randint(1,10))
+      player.health = player.health - self.opponentDmg 
+  def displayResult(self,player,opponent):
+    print(f"{player.name} used a {player.weapon.name} on {opponent.name} it dealt {self.playerDmg} dmg.")
+    print(f"{opponent.name} attacked {player.name} they dealt {self.opponentDmg} dmg")
     
     
     
@@ -170,7 +182,7 @@ def ghoulGames():
     print("Options: Play along/Fight the ghoul/Turn and run")
     userInput = input()
     if userInput == "Fight the ghoul":
-      VsGhoul() 
+      vsGhoul() 
     elif userInput == "Play along":
       if player.dexterity >= 16 or player.strength >= 16:
         print("Thanks to your athletcism you manage to duck, dodge, and weave through the obstacles")
@@ -193,12 +205,37 @@ def ghoulGames():
         print("'Bah, what a poor showing. You must die for wasting my audience's valuable time'")
         player.hp = player.hp - 10
         checkForDead()
-        VsGhoul() 
+        vsGhoul() 
     elif userInput == "Turn and run":
       print("You find the door has slammed closed behind you")
       ghoulGames()
     else: 
       print("Please enter a valid option.")
+
+def vsGhoul():
+  actions = ["Small trapdoor","Doorway"]
+  print("hohoho, I see you have chosen death, young adventurer.")
+  ghoul = monster('ghoul', 50, 8, 'Fireball', 'MagicShield')
+  currentCombat = combat() 
+  while not currentCombat.gameOver:
+    currentCombat.checkWin()
+    currentCombat.newRound()
+    currentCombat.takeTurn(player,ghoul)
+    currentCombat.monsterTurn(player,ghoul)
+    currentCombat.displayResult(player,ghoul)
+  print("""As the ghoul dies he dirfts apart into whisps "Beware the beast that lays within, you don't know the powers you play with" """)
+  print("""A small hatch pop open from underneath where the ghost died. You think you can see treasure down there but you're not too sure.
+  you also notice a door off to the side that looks much less rewarding, but also much less ominous""")
+  print("Options: Small trapdoor/Doorway ")
+  userInput = ""
+  while userInput not in actions:
+    userInput = input()
+    if userInput == "Doorway":
+      longHallway()
+    elif userInput == "Small trapdoor":
+      treasureRoom()
+    else:
+      print("please enter a valid option")
 
 def longHallway(): 
   actions = ["Approach the door","Investigate the walls","Turn and run"]
