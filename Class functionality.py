@@ -1,12 +1,13 @@
 
 import random
+import time
 from enum import Enum
 
 #Lists for potential inventory systems
 Weapon = Enum("Weapon", "LongSword, Greataxe, Spear")
 Spell = Enum("Spells", "Fireball, IceStorm, LightningBolt")
 Tool = Enum("Tools", "Lockpick, GrapplingHook, " )
-Shield = Enum("Defense","Shield, Chain mail, Cloak")
+Shield = Enum("Defense","Shield, ChainMail, Cloak")
 Resistance = Enum("Resistance","MagicShield, RingOfProtection, Counterspell")
 
 
@@ -36,7 +37,7 @@ class char:
         self.resistance = None
         self.dmg = 10
     def __str__(self):
-        return f"{self.race}()"
+        return f"{self.race}{self.weapon}{self.shield}{self.tool}{self.spell}{self.resistance}()"
     def selectThings(self):
         if self.race == "Warrior":
           weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
@@ -73,7 +74,7 @@ class char:
           self.tool = Tool(choice)
           self.dmg = self.dmg + self.dexterity
           print("Happy hunting")
-#same as the above character template but for monsters
+#same as the above character template but for monsters, much shorter
 class monster:
     def __init__(self, name, hp, damage, weakness, blockedBy):
         self.name = name
@@ -97,11 +98,11 @@ class combat:
     if opponent.hp <= 0:
       self.gameOver = True
       print("You win")
-    elif player.health <= 0:
+    elif player.hp <= 0:
       print("You have died")
       quit()
   def takeTurn(self,player,opponent):
-    if player.weapon or player.spell in opponent.weakness:
+    if player.weapon or player.spell == opponent.weakness:
       self.playerDmg = (player.dmg+ random.randint(1,10))*2
       opponent.hp = opponent.hp - self.playerDmg
       print(f"Critical Hit! This monster seems weak to your attacks")
@@ -110,18 +111,19 @@ class combat:
       opponent.hp = opponent.hp - self.playerDmg
       print(f"Solid dmg")
   def monsterTurn(self,player,opponent):
-    if player.defense or player.resistance in opponent.blockedBy:
+    if player.shield or player.resistance == opponent.blockedBy:
       print("Your defenses seem particularly strong against this creature")
       self.opponentDmg = (opponent.damage + random.randint(1,10))/2
-      player.health = player.health - self.opponentDmg
+      player.hp = player.hp - self.opponentDmg
     else:
       print("You take a solid hit")
       self.opponentDmg = (opponent.damage + random.randint(1,10))
-      player.health = player.health - self.opponentDmg 
+      player.hp = player.hp - self.opponentDmg 
   def displayResult(self,player,opponent):
-    print(f"{player.name} used a {player.weapon.name} on {opponent.name} it dealt {self.playerDmg} dmg.")
-    print(f"{opponent.name} attacked {player.name} they dealt {self.opponentDmg} dmg")
-    
+    print(f"{player.race} used a {player.weapon.name} on {opponent.name} it dealt {self.playerDmg} dmg.")
+    print(f"{opponent.name} attacked {player.race} they dealt {self.opponentDmg} dmg")
+    print(f"Opponent hp:{opponent.hp}")
+    print(f"Player hp:{player.hp}")
     
     
   
@@ -144,8 +146,7 @@ def playeracterSelect():
       player = char('Wizard', 50, 8, 10, 12, 18, 14)
       playerStart()
     elif userInput == "Warrior":
-      player = char('Warrior', 75, 18, 14, 14, 8, 10)
-      player.selectThings() 
+      player = char('Warrior', 75, 18, 14, 14, 8, 10) 
       playerStart()
     else: 
       print("Please enter a valid option.")
@@ -215,14 +216,15 @@ def ghoulGames():
 def vsGhoul():
   actions = ["Small trapdoor","Doorway"]
   print("hohoho, I see you have chosen death, young adventurer.")
-  ghoul = monster('ghoul', 50, 8, 'Fireball', 'MagicShield')
+  ghoul = monster('ghoul', 500, 8, 'Fireball', 'MagicShield')
   currentCombat = combat() 
   while not currentCombat.gameOver:
-    currentCombat.checkWin()
     currentCombat.newRound()
     currentCombat.takeTurn(player,ghoul)
     currentCombat.monsterTurn(player,ghoul)
     currentCombat.displayResult(player,ghoul)
+    currentCombat.checkWin(player,ghoul)
+    time.sleep(1)
   print("""As the ghoul dies he dirfts apart into whisps "Beware the beast that lays within, you don't know the powers you play with" """)
   print("""A small hatch pop open from underneath where the ghost died. You think you can see treasure down there but you're not too sure.
   you also notice a door off to the side that looks much less rewarding, but also much less ominous""")
