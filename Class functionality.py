@@ -1,4 +1,4 @@
-import random
+import random 
 from enum import Enum
 
 #Lists for potential inventory systems
@@ -7,6 +7,9 @@ Spell = Enum("Spells", "Fireball, IceStorm, LightningBolt")
 Tool = Enum("Tools", "Lockpick, GrapplingHook, " )
 Shield = Enum("Defense","Shield, Chain mail, Cloak")
 Resistance = Enum("Resistance","MagicShield, RingOfProtection, Counterspell")
+
+
+
 
 def checkForDead():
   if player.hp <= 0:
@@ -30,6 +33,7 @@ class char:
         self.tool = None
         self.spell = None
         self.resistance = None
+        self.dmg = 10
     def __str__(self):
         return f"{self.race}()"
     def selectThings(self):
@@ -42,6 +46,7 @@ class char:
           shields = ", ".join(shields[:-1]) + " or " + shields[-1]
           choice = int(input(f"Choose your shield {shields}:  "))
           self.shield = Shield(choice)
+          self.dmg = self.dmg + self.strength
           print("Excellent selection, Sir")
         #Reminder here to make the stats become modified based on what equipment is selected
         #and that equipment can return as a string so that it can be output in descriptions. 
@@ -54,6 +59,7 @@ class char:
           resistances = ", ".join(resistances[:-1]) + " or " + resistances[-1]
           choice = int(input(f"Choose your shield {resistances}:  "))
           self.resistance = Resistance(choice)
+          self.dmg = self.dmg + self.intelligence
           print("May your magic burn bright")
         elif self.race == "Rogue":
           weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
@@ -63,21 +69,53 @@ class char:
           tools = [f"{tool.value}-{tool.name}" for tool in Tool]
           tools = ", ".join(tools[:-1]) + " or " + tools[-1]
           choice = int(input(f"Choose your shield {tools}:  "))
-          self.resistance = Tool(choice)
+          self.tool = Tool(choice)
+          self.dmg = self.dmg + self.dexterity
           print("Happy hunting")
 
     
 #same as the above character template but for monsters
 class monster:
-    def __init__(self, name, hp, damage, weakness):
+    def __init__(self, name, hp, damage, weakness, blockedBy):
         self.name = name
         self.hp = hp
         self.damage = damage
         self.weakness = weakness
+        self.blockedBy = blockedBy 
     def __str__(self):
-        return f"{self.race}{self.weakness}()"
-       
+        return f"{self.race}()"
+ #First attempts at making a combat system, make dmg a variable thats set in classes and then modified based off of stats.Give weapons a strength to match weaknesses      
+class combat:
+  def __init__(self):
+    self.round = 0
+    self.gameOver = False 
+  def newRound(self):
+    self.round += 1
+    print(f"\n***   Round: {self.round}   ***\n") 
+  def checkWin(self, opponent):
+    if opponent.hp <= 0:
+      print("You win")
+  def takeTurn(self,player,opponent):
+    if player.weapon or player.spell in opponent.weakness:
+      opponent.hp = opponent.hp - (player.dmg + random.randint(1,10))*2
+      print(f"Critical Hit! This monster seems weak to your attacks")
+    else:
+      opponent.hp = opponent.hp - (player.dmg+ random.randint(1,10))
+      print(f"Solid dmg")
+  def monsterTurn(self,player,opponent):
+    if player.defense or player.resistance in opponent.blockedBy:
+      print("Your defenses seem particularly strong against this creature")
+      player.health = player.health - (opponent.damage + random.randint(1,10))/2
+    else:
+      print("You take a solid hit")
+      player.health = player.health - (opponent.damage+ random.randint(1,10))
+    
+    
+    
+  
+  
 
+    
 def playeracterSelect():
   classes = ["Warrior","Rogue","Wizard"]
   print("We'll need to start with your class. What kind of adventure are you?")
@@ -88,13 +126,13 @@ def playeracterSelect():
     print("Options: Rogue/Warrior/Wizard")
     userInput = input()
     if userInput == "Rogue":
-      player = char('Rogue', 10, 10, 16, 10, 14, 16)
+      player = char('Rogue', 50, 10, 18, 10, 14, 16)
       playerStart()
     elif userInput == "Wizard":
-      player = char('Wizard', 10, 8, 10, 12, 18, 14)
+      player = char('Wizard', 50, 8, 10, 12, 18, 14)
       playerStart()
     elif userInput == "Warrior":
-      player = char('Warrior', 15, 18, 12, 4, 8, 3)
+      player = char('Warrior', 75, 18, 14, 14, 8, 10)
       player.selectThings() 
       playerStart()
     else: 
@@ -118,6 +156,7 @@ def playerStart():
       print("Please enter a valid option.")
 
 
+    
 #First room that you find by going forwards. Requires a stat check to pass the course
 #if they opt to fight or fail the course it initiates combat with the ghoul
 #upon completeing the games playeracters with a high wis stat can find a secret room
@@ -152,7 +191,7 @@ def ghoulGames():
         print("You make it part way through the course but you lose your grip on a rope and fall")
         print("partially into a pool of lava, singeing your leg")
         print("'Bah, what a poor showing. You must die for wasting my audience's valuable time'")
-        player.hp = player.hp - 2
+        player.hp = player.hp - 10
         checkForDead()
         VsGhoul() 
     elif userInput == "Turn and run":
@@ -182,18 +221,18 @@ def longHallway():
       nearly all your willpower to to stay focused on the swirling caligraphy of the text as the laughing gets louder.
       It's beginning to sound like you yourself are also laughing.""")
       if player.intelligence >= 18:
-        print("Because of your rigorous mental training you find yourself able to fight through the laughter and find your own mental voice.")
+        print("Thankfully because of your rigorous mental training you find yourself able to fight through the laughter and find your own mental voice.")
         print("""You make out the text "Here, imprisoned, lies Krushok, Firstborn Tyrant of the Moon" underneath seems to be inscribed some kind of spell
         "Ecliptic beam" """)
         player.spell = "EclipticBeam"
       else:
         print("""As you get within range of touching the wall the voices grow so loud that they begin to drown out your thoughts
         until all you can experience is the mania that rolls over you. You stumble into the wall and hit your head on the stone, knocking yourself out.
-        When you come too it the wall seems perfectly mundane and you can't see any writing. You feel like a bit os sanity has left your body but 
+        When you come too it the wall seems perfectly mundane and you can't see any writing. You feel like a bit of sanity has left your body but 
         perhaps you gained a bit of knowledge. As you walk away from the wall you begin to hear the whispers again...""")
         player.wisdom = player.wisdom - 2
         player.intelligence = player.intelligence + 1
-        player.hp = player.hp - 2
+        player.hp = player.hp - 10
         longHallway()
     else:
       print("Please enter a valid option")
