@@ -13,7 +13,6 @@ Shield = Enum("Defense","Shield, ChainMail, Cloak")
 Resistance = Enum("Resistance","MagicShield, RingOfProtection, Counterspell")
 Basic = Enum("Basics", "Shortsword, Buckler, Hammer, Flame, Amulet")
 
-
 def checkForDead():
   if player.hp <= 0:
     print("You Have Died")
@@ -37,7 +36,7 @@ class char:
         self.spell = None 
         self.resistance = None 
         self.dmg = 10
-        self.dmgType = ''
+        self.dmgType = None
 
 
     def __str__(self):
@@ -49,62 +48,54 @@ class char:
           choice = int(input(f"Choose your weapon {weapons}:  "))
           self.weapon = Weapon(choice)
           if self.weapon == 'Greataxe':
-            self.dmg = random.randint(12,18)
             self.dmgType = 'Slashing'
           if self.weapon == 'LongSword':
-            self.dmg = random.randint(10,20)
             self.dmgType = 'Slashing'
-          if self.weapon == 'Spear':
-            self.dmg = random.randint(10,18)
+          if self.weapon == 'Spear':  
             self.dmgType = 'Piercing'
           shields = [f"{shield.value}-{shield.name}" for shield in Shield]
           shields = ", ".join(shields[:-1]) + " or " + shields[-1]
           choice = int(input(f"Choose your shield {shields}:  "))
           self.shield = Shield(choice)
-          self.dmg = self.dmg + self.strength
+          self.dmg += self.strength
           print("Excellent selection, Sir")
-        #Reminder here to make the stats become modified based on what equipment is selected
-        #and that equipment can return as a string so that it can be output in descriptions. 
+
         elif self.race == "Wizard":
           spells = [f"{spell.value}-{spell.name}" for spell in Spell]
           spells = ", ".join(spells[:-1]) + " or " + spells[-1]
           choice = int(input(f"Choose your weapon {spells}:  "))
           self.spell = Spell(choice)
-          if self.weapon == 'Fireball':
-            self.dmg = random.randint(5,35)
+          if self.spell == 'Fireball':           
             self.dmgType = 'Fire'
-          if self.weapon == 'IceStorm':
-            self.dmg = random.randint(15,25)
-            self.dmgType = "Cold"
-          if self.weapon == 'LightningBolt':
-            self.dmg = random.randint(1,40)
+          if self.spell == 'IceStorm':
+            self.dmgType = 'Cold'
+          if self.spell == 'LightningBolt':
             self.dmgType = "Lightning"
           resistances = [f"{resistance.value}-{resistance.name}" for resistance in Resistance]
           resistances = ", ".join(resistances[:-1]) + " or " + resistances[-1]
           choice = int(input(f"Choose your shield {resistances}:  "))
           self.resistance = Resistance(choice)
-          self.dmg = self.dmg + self.intelligence
+          self.dmg += self.intelligence
           print("May your magic burn bright")
+
         elif self.race == "Rogue":
           weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
           weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
           choice = int(input(f"Choose your weapon {weapons}:  "))
           self.weapon = Weapon(choice)
           if self.weapon == 'Greataxe':
-            self.dmg = random.randint(8,30)
             self.dmgType = 'Slashing'
           if self.weapon == 'LongSword':
-            self.dmg = random.randint(5,30)
             self.dmgType = "Slashing"
           if self.weapon == 'Spear':
-            self.dmg = random.randint(12,25)
             self.dmgType = 'Piercing'
           tools = [f"{tool.value}-{tool.name}" for tool in Tool]
           tools = ", ".join(tools[:-1]) + " or " + tools[-1]
           choice = int(input(f"Choose your shield {tools}:  "))
           self.tool = Tool(choice)
-          self.dmg = self.dmg + self.dexterity
+          self.dmg += self.dexterity
           print("Happy hunting")
+          
 #same as the above character template but for monsters, much shorter
 class monster:
     def __init__(self, name, hp, damage, weakness, blockedBy):
@@ -297,25 +288,25 @@ def longHallway():
     userInput = input()
     if userInput == "Approach the door":
       print("""As you walk down the hallway you can't help but feel like the air clings to you in an unnatural way,
-      making the air itself feel thick and oily. Upon reaching the door you realize it's even larger than you initially thought.
-      The door is easily over 9ft tall and the locks are rusted over. Theres a series of claw marks on the sarrounding floor and walls. """)
+        making the air itself feel thick and oily. Upon reaching the door you realize it's even larger than you initially thought.
+        The door is easily over 9ft tall and the locks are rusted over. Theres a series of claw marks on the sarrounding floor and walls. """)
       print("Options: Open the door/Back away")
       theBeast()
     elif userInput == "Investigate the walls":
       print("""As you approach the wall you begin to hear whispering from the edges of your vision, 
-      it's almost as though some unseen force is laughing at you. Now that the writing comes into focus it takes
-      nearly all your willpower to to stay focused on the swirling caligraphy of the text as the laughing gets louder.
-      It's beginning to sound like you yourself are also laughing.""")
+        it's almost as though some unseen force is laughing at you. Now that the writing comes into focus it takes
+        nearly all your willpower to to stay focused on the swirling caligraphy of the text as the laughing gets louder.
+        It's beginning to sound like you yourself are also laughing.""")
       if player.intelligence >= 18:
         print("Thankfully because of your rigorous mental training you find yourself able to fight through the laughter and find your own mental voice.")
         print("""You make out the text "Here, imprisoned, lies Krushok, Firstborn Tyrant of the Moon" underneath seems to be inscribed some kind of spell
-        "Ecliptic beam" """)
+          "Ecliptic beam" """)
         player.spell = "EclipticBeam"
       else:
         print("""As you get within range of touching the wall the voices grow so loud that they begin to drown out your thoughts
-        until all you can experience is the mania that rolls over you. You stumble into the wall and hit your head on the stone, knocking yourself out.
-        When you come too it the wall seems perfectly mundane and you can't see any writing. You feel like a bit of sanity has left your body but 
-        perhaps you gained a bit of knowledge. As you walk away from the wall you begin to hear the whispers again...""")
+          until all you can experience is the mania that rolls over you. You stumble into the wall and hit your head on the stone, knocking yourself out.
+          When you come too it the wall seems perfectly mundane and you can't see any writing. You feel like a bit of sanity has left your body but 
+          perhaps you gained a bit of knowledge. As you walk away from the wall you begin to hear the whispers again...""")
         player.wisdom = player.wisdom - 2
         player.intelligence = player.intelligence + 1
         player.hp = player.hp - 10
