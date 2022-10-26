@@ -47,29 +47,29 @@ class char:
           weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
           choice = int(input(f"Choose your weapon {weapons}:  "))
           self.weapon = Weapon(choice)
-          if self.weapon == 'Greataxe':
+          if self.weapon == Weapon.Greataxe:
             self.dmgType = 'Slashing'
-          if self.weapon == 'LongSword':
+          if self.weapon == Weapon.LongSword:
             self.dmgType = 'Slashing'
-          if self.weapon == 'Spear':  
+          if self.weapon == Weapon.Spear:  
             self.dmgType = 'Piercing'
           shields = [f"{shield.value}-{shield.name}" for shield in Shield]
           shields = ", ".join(shields[:-1]) + " or " + shields[-1]
           choice = int(input(f"Choose your shield {shields}:  "))
           self.shield = Shield(choice)
           self.dmg += self.strength
-          print("Excellent selection, Sir")
+          print("You're stronging, Sir")
 
         elif self.race == "Wizard":
           spells = [f"{spell.value}-{spell.name}" for spell in Spell]
           spells = ", ".join(spells[:-1]) + " or " + spells[-1]
           choice = int(input(f"Choose your weapon {spells}:  "))
           self.spell = Spell(choice)
-          if self.spell == 'Fireball':           
+          if self.spell == Spell.Fireball:           
             self.dmgType = 'Fire'
-          if self.spell == 'IceStorm':
+          if self.spell == Spell.IceStorm:
             self.dmgType = 'Cold'
-          if self.spell == 'LightningBolt':
+          if self.spell == Spell.LightningBolt:
             self.dmgType = "Lightning"
           resistances = [f"{resistance.value}-{resistance.name}" for resistance in Resistance]
           resistances = ", ".join(resistances[:-1]) + " or " + resistances[-1]
@@ -83,11 +83,11 @@ class char:
           weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
           choice = int(input(f"Choose your weapon {weapons}:  "))
           self.weapon = Weapon(choice)
-          if self.weapon == 'Greataxe':
+          if self.weapon == Weapon.Greataxe:
             self.dmgType = 'Slashing'
-          if self.weapon == 'LongSword':
-            self.dmgType = "Slashing"
-          if self.weapon == 'Spear':
+          if self.weapon == Weapon.LongSword:
+            self.dmgType = 'Slashing'
+          if self.weapon == Weapon.Spear:  
             self.dmgType = 'Piercing'
           tools = [f"{tool.value}-{tool.name}" for tool in Tool]
           tools = ", ".join(tools[:-1]) + " or " + tools[-1]
@@ -125,20 +125,24 @@ class combat:
       quit()
   def takeTurn(self,player,opponent):
     roll = random.randint(1,20)
-    print(player.dmgType)
-    print(opponent.weakness)
     if player.dmgType == opponent.weakness:
       print("Your dmg type seems particularly strong against this monster")
       roll = roll + 5
     if roll >= 15:
-      print(f"You rolled a {roll} for attacking ")
-      self.playerDmg = (player.dmg+ random.randint(1,10))*2
+      print(f"You rolled a {roll} for attacking")
+      self.playerDmg = (player.dmg+ random.randint(1,10))*1.5
       opponent.hp = opponent.hp - self.playerDmg
-      print(f"Critical Hit! This monster seems weak to your attacks")
+      print(f"Critical Hit!")
+    if roll >= 20:
+      print(f"You rolled a {roll} for attacking")
+      self.playerDmg = (player.dmg+ random.randint(1,10))*3
+      opponent.hp = opponent.hp - self.playerDmg
+      print(f"POWER LEVELS OVER 9000!!!")
     else:
+      print(f"You rolled a {roll} for attacking")
       self.playerDmg = (player.dmg+ random.randint(1,10))
       opponent.hp = opponent.hp - self.playerDmg
-      print(f"You land a hit, solid dmg")
+      print(f"You land a hit")
   def monsterTurn(self,player,opponent):
     roll = random.randint(1,20)
     if roll >= 15:
@@ -227,7 +231,7 @@ def ghoulGames():
         print("'Well done young ",player.race," take this amulet as a testament to your feat' exclaims the Ringmaster")
         player.dexterity = player.dexterity + 2
         player.wisdom = player.wisdom + 2
-        print("your inventory now contains",player.intelligence)
+        print("your inventory now contains")
         if player.wisdom < 18:
           print("A single door opens on the left wall of the room")
           longHallway()
@@ -250,6 +254,9 @@ def ghoulGames():
     else: 
       print("Please enter a valid option.")
 
+    
+#First combat, player fights the ghoul and either dies or gains access to long hallway or treasure room
+
 def vsGhoul():
   actions = ["Small trapdoor","Doorway"]
   print("hohoho, I see you have chosen death, young adventurer.")
@@ -265,7 +272,8 @@ def vsGhoul():
     time.sleep(2)
   print("""As the ghoul dies he drifts apart into whisps "Beware the beast that lays within, you don't know the powers you play with" """)
   print("""A small hatch pop open from underneath where the ghost died. You think you can see treasure down there but you're not too sure.
-  you also notice a door off to the side that looks much less rewarding, but also much less ominous""")
+  you also notice a door off to the side that looks much less rewarding, but also much less ominous
+  """)
   print("Options: Small trapdoor/Doorway ")
   userInput = ""
   while userInput not in actions:
@@ -276,6 +284,24 @@ def vsGhoul():
       treasureRoom()
     else:
       print("please enter a valid option")
+
+      
+def treasureRoom():
+  actions = ["Take sword", "Take armor", "Take wand"]
+  print("""As you duck down into the trapdoor you're greeted by luminescent piles of gold, amongst which you spy 
+  multiple magic weapons. You get the feeling that these are powerful enough that you can probably only handle using one of them.
+  There's a a jagged and cruel looking sword cut from obsidian, some well crafted dwarven platemail, and a steel wand inlayed with 
+  saphires all resting on pedestals
+  """)
+  userInput = ""
+  while userInput not in actions:
+    userInput = input("Options: Take sword/Take armor/Take wand")
+    if userInput == "Take sword":
+      print("""As you grasp the hilt the hilt of """)
+    quit()
+  quit()
+  
+      
 
 def longHallway(): 
   actions = ["Approach the door","Investigate the walls","Turn and run"]
@@ -289,24 +315,28 @@ def longHallway():
     if userInput == "Approach the door":
       print("""As you walk down the hallway you can't help but feel like the air clings to you in an unnatural way,
         making the air itself feel thick and oily. Upon reaching the door you realize it's even larger than you initially thought.
-        The door is easily over 9ft tall and the locks are rusted over. Theres a series of claw marks on the sarrounding floor and walls. """)
+        The door is easily over 9ft tall and the locks are rusted over. Theres a series of claw marks on the sarrounding floor and walls. 
+        """)
       print("Options: Open the door/Back away")
       theBeast()
     elif userInput == "Investigate the walls":
       print("""As you approach the wall you begin to hear whispering from the edges of your vision, 
         it's almost as though some unseen force is laughing at you. Now that the writing comes into focus it takes
         nearly all your willpower to to stay focused on the swirling caligraphy of the text as the laughing gets louder.
-        It's beginning to sound like you yourself are also laughing.""")
+        It's beginning to sound like you yourself are also laughing.
+        """)
       if player.intelligence >= 18:
         print("Thankfully because of your rigorous mental training you find yourself able to fight through the laughter and find your own mental voice.")
         print("""You make out the text "Here, imprisoned, lies Krushok, Firstborn Tyrant of the Moon" underneath seems to be inscribed some kind of spell
-          "Ecliptic beam" """)
+          "Ecliptic beam" 
+          """)
         player.spell = "EclipticBeam"
       else:
         print("""As you get within range of touching the wall the voices grow so loud that they begin to drown out your thoughts
           until all you can experience is the mania that rolls over you. You stumble into the wall and hit your head on the stone, knocking yourself out.
           When you come too it the wall seems perfectly mundane and you can't see any writing. You feel like a bit of sanity has left your body but 
-          perhaps you gained a bit of knowledge. As you walk away from the wall you begin to hear the whispers again...""")
+          perhaps you gained a bit of knowledge. As you walk away from the wall you begin to hear the whispers again...
+          """)
         player.wisdom = player.wisdom - 2
         player.intelligence = player.intelligence + 1
         player.hp = player.hp - 10
