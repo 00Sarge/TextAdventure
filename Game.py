@@ -11,7 +11,6 @@ Spell = Enum("Spells", "Fireball, IceStorm, LightningBolt")
 Tool = Enum("Tools", "Lockpick, GrapplingHook, " )
 Shield = Enum("Defense","Shield, ChainMail, Cloak")
 Resistance = Enum("Resistance","MagicShield, RingOfProtection, Counterspell")
-Basic = Enum("Basics", "Shortsword, Buckler, Hammer, Flame, Amulet")
 
 def checkForDead():
   if player.hp <= 0:
@@ -37,6 +36,7 @@ class char:
         self.resistance = None 
         self.dmg = 10
         self.dmgType = None
+        self.xp = 0 
 
 
     def __str__(self):
@@ -98,12 +98,13 @@ class char:
           
 #same as the above character template but for monsters, much shorter
 class monster:
-    def __init__(self, name, hp, damage, weakness, blockedBy):
+    def __init__(self, name, hp, damage, weakness, blockedBy, xp):
         self.name = name
         self.hp = hp
         self.damage = damage
         self.weakness = weakness
         self.blockedBy = blockedBy 
+        self.xp = xp
     def __str__(self):
         return f"{self.name}{self.weakness}{self.blockedBy}()"
  #First attempts at making a combat system, make dmg a variable thats set in classes and then modified based off of stats.Give weapons a strength to match weaknesses      
@@ -120,6 +121,7 @@ class combat:
     if opponent.hp <= 0:
       self.gameOver = True
       print("You win")
+      player.xp += opponent.xp 
     elif player.hp <= 0:
       print("You have died")
       quit()
@@ -260,7 +262,7 @@ def ghoulGames():
 def vsGhoul():
   actions = ["Small trapdoor","Doorway"]
   print("hohoho, I see you have chosen death, young adventurer.")
-  ghoul = monster('ghoul', 300, 8, 'Fire'  , 'MagicShield' )
+  ghoul = monster('ghoul', 300, 8, 'Fire'  , 'MagicShield',10 )
   currentCombat = combat() 
   while not currentCombat.gameOver:
     print("Type Next to begin next round ")
@@ -297,7 +299,9 @@ def treasureRoom():
   while userInput not in actions:
     userInput = input("Options: Take sword/Take armor/Take wand")
     if userInput == "Take sword":
-      print("""As you grasp the hilt the hilt of """)
+      print("""As you grasp the hilt the hilt of the black stone blade you feel infernal strength race through you. You feel both stronger and as though you 
+      would take less damage from fire """)
+      
     quit()
   quit()
   
