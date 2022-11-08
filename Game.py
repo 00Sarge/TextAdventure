@@ -38,23 +38,29 @@ def levelUp():
     print(f"4: Intelligence")
     print(f"5: Wisdom")
     while increases < 2:
-      userChoice = input("Type the number of the stat you wish to increase")
+      print("Type the number of the stat you wish to increase")
+      userChoice = int(input())
       if userChoice == 1:
         player.strength +=2
+        print("Strength + 2!")
       elif userChoice == 2:
         player.dexterity +=2
+        print("Dexterity + 2!")
       elif userChoice == 3:
         player.constitution +=2
+        print("Constitution + 2!")
       elif userChoice == 4:
         player.intelligence +=2
+        print("Intelligence + 2!")
       elif userChoice == 5:
         player.wisdom +=2
+        print("Wisdom + 2!")
       else:
         print("please enter a number 1-5")
       increases += 1
     calcStats()
     player.hp = player.maxhp
-    print("You feel invigorated by your level up. Health to max")
+    print("You feel invigorated by your level up.")
   else:
     pass
   
@@ -71,7 +77,9 @@ def calcStats():
   player.critMultiplier = player.dexterity/5
 
 def printStats():
-  print(f"""Adventurer:{player.name} the lvl {player.lvl} {player.race}
+  print(f"""
+
+  Adventurer:{player.name} the lvl {player.lvl} {player.race}
 
   Max HP:{player.maxhp} -- How many hits you can take
 
@@ -107,7 +115,8 @@ def printStats():
 
   Constitution Modifier:{player.conModifier} -- Your constitution/10, multiplies into your max hp
 
-  Crit Multiplier:{player.critMultiplier} -- Your dexterity/5, multiplies your dmg on crits over 20""")
+  Crit Multiplier:{player.critMultiplier} -- Your dexterity/5, multiplies your dmg on crits over 20
+  """)
   
 
 #Should allow players to select their class, altering their base stats and equipment.
@@ -208,6 +217,8 @@ class monster:
         self.xp = xp
     def __str__(self):
         return f"{self.name}{self.weakness}{self.blockedBy}()"
+    
+
  #First attempts at making a combat system, make dmg a variable thats set in classes and then modified based off of stats.Give weapons a strength to match weaknesses      
 class combat:
   def __init__(self):
@@ -286,7 +297,7 @@ def playeracterSelect():
   name = input()  
   print("Good luck, " +name+ ".")  
   classes = ["Warrior","Rogue","Wizard"]
-  print("Nxt we'll need your class. What kind of adventure are you?")
+  print("Next we'll need your class. What kind of adventure are you?")
   userInput = ""
   global player
   player = ()
@@ -304,13 +315,10 @@ def playeracterSelect():
       playerStart()
     else: 
       print("Please enter a valid option.")
-
+  player.selectThings()
 
 def playerStart():
   actions = ["Left","Right","Forward"]
-  player.selectThings()
-  player.xp += 10
-  levelUp()
   print("You begin in a dusty room made of cobbled stone. There are 3 paths.")
   userInput = ""
   while userInput not in actions:
@@ -410,7 +418,7 @@ def treasureRoom():
   As you duck down into the trapdoor you're greeted by luminescent piles of gold, amongst which you spy 
   multiple magic weapons. You get the feeling that these are powerful enough that you can probably only handle using one of them.
   There's a a jagged and cruel looking sword cut from obsidian, some well crafted dwarven platemail, and a steel wand inlayed with 
-  saphires all resting on pedestals
+  saphires all resting on pedestals.
   """)
   userInput = ""
   while userInput not in actions:
@@ -479,7 +487,7 @@ def trollBridge():
       Wind is my foe.
       
       What am I?
-      It's really good isn't it? I came up with it myself'
+      It's really good isn't it? I came up with it myself!'
       """)
       playerAnswer = ""
       answer = "candle"
@@ -497,7 +505,7 @@ def trollBridge():
           print("Sorry, but that's not it")
           attempts += 1 
 ## toDo - Make an option to double down for a reward
-      print(f"'Oh excellent, so well done little {player.name}. Here, you may cross my bridge' the troll steps aside and lets you pass")
+      print(f"'Oh excellent, so well done little {player.race}. Here, you may cross my bridge' the troll steps aside and lets you pass")
       print("As you turn away from the troll and continue down the passage the air thickens and you think you hear voices ahead")
       input("press enter to continue")
       cultGathering() 
@@ -546,7 +554,7 @@ def trollFight ():
   print("""
   The troll crashes to the ground, dropping his mace, deafeated. You see the yawning passsage way beyond the bridge is dimly lit and appears to almost be
   leaking darkness into the rest of the room. With the door locked behind you the only other option seems to be down the pit beneath the bridge. There's a well worn 
-  rope tied to the edge that you could maybe shimmy down, but it would be very difficult. Also, the trolls mace rests heavily on the ground. It's incredibly massive but you
+  rope tied to the edge that you could maybe shimmy down, but it would be very difficult. If only you had something like a grappling hook to tie up here.... Also, the trolls mace rests heavily on the ground. It's incredibly massive but you
   could try to lift it...
   """)
   userInput = ""
@@ -555,7 +563,10 @@ def trollFight ():
     userInput = input()
     if userInput == "Climb down":
       if player.dexterity >= 20 or player.strength >= 24:
-        print("You nimbly wind your way down the rope into the darkness")
+        print("You nimbly wind your way down the threadbare rope into the darkness")
+        dungeon()
+      elif "GrapplingHook" in player.tools:
+        print("Thankfully you came prepared. You tie the grapple up here and descend into the darkness")
         dungeon()
       else:
         print("Unfortunately your hands slip and you lose grip on the rope, tumbling into the dark.")
@@ -569,7 +580,8 @@ def trollFight ():
         player.dmgBonus = 15
         player.dmgType = 'Bludgeoning'
         player.weapon = 'Troll Mace'
-        playerAnswer = input("Options: Climb down/Enter the cave")
+        print("Options: Climb down/Enter the cave")
+        playerAnswer = input()
         if playerAnswer == "Climb down":
           dungeon()
         elif playerAnswer == "Enter the cave":
@@ -587,46 +599,61 @@ def longHallway():
   actions = ["Approach the door","Investigate the walls","Turn and run"]
   print("You step into a long hallway, dimly lit and dank. The walls seems to covered in a scrawl that looks like a language, though not one that you know")
   print("At the end of the hallway you see a tall door carved of ebony.")
-  print("The door is covered in latches and locks on your side... meaning there must have been or may still be something trapped in there")
+  print("The door is covered in latches and locks on your side... meaning there must have been, or may still be, something trapped in there")
   userInput = ""
   while userInput not in actions:
     print("Options: Approach the Door/Investigate the walls/Turn and run")
     userInput = input()
     if userInput == "Approach the door":
       print("""
-        As you walk down the hallway you can't help but feel like the air clings to you in an unnatural way,
-        making the air itself feel thick and oily. Upon reaching the door you realize it's even larger than you initially thought.
-        The door is easily over 9ft tall and the locks are rusted over. Theres a series of claw marks on the sarrounding floor and walls. 
+      As you walk down the hallway you can't help but feel like the air clings to you in an unnatural way,
+      making the air itself feel thick and oily. Upon reaching the door you realize it's even larger than you initially thought.
+      The door is easily over 9ft tall and the locks are rusted over. Theres a series of claw marks on the sarrounding floor and walls. 
       """)
       print("Options: Open the door/Back away")
-      denOfTheBeast()
+      choices = ["Open the door","Back away"]
+      choice = input()
+      while choice not in choices:
+        if choice == "Open the door":
+          print("You slowly unlock the old rusty locks, grinding the bolts in their grooves. The tall door swings open with an unnatural silence.")
+          denOfTheBeast()
+        elif choice == "Back away":
+          longHallway()
+        else:
+          print("please enter a valid option")
+      
+
     elif userInput == "Investigate the walls":
       print("""
-        As you approach the wall you begin to hear whispering from the edges of your vision, 
-        it's almost as though some unseen force is laughing at you. Now that the writing comes into focus it takes
-        nearly all your willpower to to stay focused on the swirling caligraphy of the text as the laughing gets louder.
-        It's beginning to sound like you yourself are also laughing.
+      As you approach the wall you begin to hear whispering from the edges of your vision, 
+      it's almost as though some unseen force is laughing at you. Now that the writing comes into focus it takes
+      nearly all your willpower to to stay focused on the swirling caligraphy of the text as the laughing gets louder.
+      It's beginning to sound like you yourself are also laughing.
       """)
       if player.intelligence >= 18:
         print("Thankfully because of your rigorous mental training you find yourself able to fight through the laughter and find your own mental voice.")
         print("""
-          You make out the text "Here, imprisoned, lies Krushok, Firstborn Tyrant of the Moon" underneath seems to be inscribed some kind of spell
-          "Ecliptic beam" 
+        You make out the text "Here, imprisoned, lies Krushok, Firstborn Tyrant of the Moon" underneath seems to be inscribed some kind of spell
+        "Ecliptic beam" 
         """)
         player.spell = "EclipticBeam"
         player.dmgType = 'Dark'
         player.dmgBonus = 10
+        longHallway()
       else:
         print("""
-          As you get within range of touching the wall the voices grow so loud that they begin to drown out your thoughts
-          until all you can experience is the mania that rolls over you. You stumble into the wall and hit your head on the stone, knocking yourself out.
-          When you come too it the wall seems perfectly mundane and you can't see any writing. You feel like a bit of sanity has left your body but 
-          perhaps you gained a bit of knowledge. As you walk away from the wall you begin to hear the whispers again...
+        As you get within range of touching the wall the voices grow so loud that they begin to drown out your thoughts
+        until all you can experience is the mania that rolls over you. You stumble into the wall and hit your head on the stone, knocking yourself out.
+        When you come too it the wall seems perfectly mundane and you can't see any writing. You feel like a bit of sanity has left your body but 
+        perhaps you gained a bit of knowledge. As you walk away from the wall you begin to hear the whispers again...
         """)
         player.wisdom = player.wisdom - 2
         player.intelligence = player.intelligence + 1
         player.hp = player.hp - 10
         longHallway()
+    elif userInput == "Turn and run":
+      print("You turn and exit the way you came")
+      playerStart()
     else:
       print("Please enter a valid option")
 
