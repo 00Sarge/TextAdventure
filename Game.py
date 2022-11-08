@@ -6,7 +6,7 @@ from enum import Enum
 from pynput.keyboard import Key, Listener
 
 #Lists for potential inventory systems
-Weapon = Enum("Weapon", "LongSword, Greataxe, Spear")
+Weapon = Enum("Weapon", "Longsword, Warhammer, Spear")
 Spell = Enum("Spells", "Fireball, IceStorm, LightningBolt")
 Tool = Enum("Tools", "Lockpick, GrapplingHook, " )
 Shield = Enum("Defense","Shield, ChainMail, Cloak")
@@ -15,22 +15,114 @@ Resistance = Enum("Resistance","MagicShield, RingOfProtection, Counterspell")
 def checkForDead():
   if player.hp <= 0:
     print("You Have Died")
-    time.sleep(4)
+    time.sleep(3)
     quit()
   else:
     pass
 
+
+def levelUp():
+  if player.xp >= 10 * player.lvl:
+    player.xp -= 10*player.lvl
+    increases = 0
+    print("Level up!")
+    player.maxhp += 10
+    player.lvl += 1
+    calcStats()
+    printStats()
+    print("Choose two stats to increase by 2")
+    ##stats = ["strength","dexterity","constitution","intelligence","wisdom"] <- in case some particular slimmer code doesn't work
+    print(f"1: Strength")
+    print(f"2: Dexterity")
+    print(f"3: Constitution")
+    print(f"4: Intelligence")
+    print(f"5: Wisdom")
+    while increases < 2:
+      userChoice = input("Type the number of the stat you wish to increase")
+      if userChoice == 1:
+        player.strength +=2
+      elif userChoice == 2:
+        player.dexterity +=2
+      elif userChoice == 3:
+        player.constitution +=2
+      elif userChoice == 4:
+        player.intelligence +=2
+      elif userChoice == 5:
+        player.wisdom +=2
+      else:
+        print("please enter a number 1-5")
+      increases += 1
+    calcStats()
+    player.hp = player.maxhp
+    print("You feel invigorated by your level up. Health to max")
+  else:
+    pass
+  
+#toDo - Make a printStats functions to display stats, and a calcStats to reintialize stats
+def calcStats():
+  player.conModifier = player.constitution/10
+  player.maxhp = player.maxhp*player.conModifier
+  if player.race == "Warrior":
+    player.dmg = 10 + player.strength
+  elif player.race == "Rogue":
+    player.dmg = 10 + player.dexterity
+  elif player.race == "Wizard":
+    player.dmg = 10 + player.intelligence
+  player.critMultiplier = player.dexterity/5
+
+def printStats():
+  print(f"""Adventurer:{player.name} the lvl {player.lvl} {player.race}
+
+  Max HP:{player.maxhp} -- How many hits you can take
+
+  Strength: {player.strength} -- Affects warrior dmg and your ability to complete tasks of heft
+
+  Dexterity:{player.dexterity} -- Affects rogue dmg and your ability to complete mobility based feats and increases your crit dmg
+
+  Constitution:{player.constitution} -- Affects your max HP and resistance to some attacks
+
+  Intelligence:{player.intelligence} -- Affects wizard dmg and understanding of things
+
+  Wisdom:{player.wisdom} -- Affects perception and noticing secrets
+
+  Weapon:{player.weapon} -- Affects your dmg type and amount
+
+  Shield:{player.shield} -- Blocks physical damage
+
+  Tool:{player.tool} -- Situational items
+
+  Spell:{player.spell} -- Decides damage type and power of the mage, some noncombat use
+
+  Resistance:{player.resistance} -- Provides blocking power against magic
+
+  Damage:{player.dmg} -- Base damage before rolls and calculations, decided by your main stat
+
+  Damage Type:{player.dmgType} -- Decided by your main method of attack, some enemies are weaker or stronger against specific types of dmg
+
+  XP:{player.hp} -- Counts experience total until next level up, XP requirement is your level * 10
+
+  Damage Stop:{player.dmgStop} -- Blocks a flat amount of damage, provided by advanced defensive items
+
+  Damage Bonus:{player.dmgBonus} -- Additional damage added onto your base before calculations, added by your weapon
+
+  Constitution Modifier:{player.conModifier} -- Your constitution/10, multiplies into your max hp
+
+  Crit Multiplier:{player.critMultiplier} -- Your dexterity/5, multiplies your dmg on crits over 20""")
+  
+
 #Should allow players to select their class, altering their base stats and equipment.
 class char:
-    def __init__(self, race, hp, strength, dexterity, constitution, intelligence, wisdom,):
+    def __init__(self, race, name, hp, strength, dexterity, constitution, intelligence, wisdom,):
+        self.name = name 
         self.race = race
         self.maxhp = hp
         self.hp = hp
-        self.dexterity = dexterity
         self.strength = strength
+        self.dexterity = dexterity
         self.constitution = constitution
         self.intelligence = intelligence
         self.wisdom = wisdom
+        self.stats = [self.strength,self.dexterity,self.constitution,self.intelligence,self.wisdom]
         self.weapon = None 
         self.shield = None  
         self.tool = None 
@@ -40,20 +132,25 @@ class char:
         self.dmgType = None
         self.xp = 0 
         self.dmgStop = 0 
-
+        self.dmgBonus = 0
+        self.lvl = 1
+        self.conModifier = self.constitution/10
+        self.maxhp = self.maxhp*self.conModifier
+        self.critMultiplier = self.dexterity/5
 ## toDo - write a simple level up function that checks xp and then allows them to choose some stat increases and increases their HP
 ## toDo - make a calculate function that adds up damage and stats before fights to make things more progressive, con is a modifier to HP
+## toDo - make it so weapons affect your dmg bonus, not dmg and thus don't stack
     def __str__(self):
-        return f"{self.race}{self.weapon}{self.shield}{self.tool}{self.spell}{self.resistance}{self.dmgType}()"
+        return f"{self.race}{self.weapon}{self.shield}{self.tool}{self.spell}{self.resistance}{self.dmgType}{self.name}()"
     def selectThings(self):
         if self.race == "Warrior":
           weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
           weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
           choice = int(input(f"Choose your weapon {weapons}:  "))
           self.weapon = Weapon(choice)
-          if self.weapon == Weapon.Greataxe:
-            self.dmgType = 'Slashing'
-          if self.weapon == Weapon.LongSword:
+          if self.weapon == Weapon.Warhammer:
+            self.dmgType = 'Bludgeoning'
+          if self.weapon == Weapon.Longsword:
             self.dmgType = 'Slashing'
           if self.weapon == Weapon.Spear:  
             self.dmgType = 'Piercing'
@@ -87,9 +184,9 @@ class char:
           weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
           choice = int(input(f"Choose your weapon {weapons}:  "))
           self.weapon = Weapon(choice)
-          if self.weapon == Weapon.Greataxe:
-            self.dmgType = 'Slashing'
-          if self.weapon == Weapon.LongSword:
+          if self.weapon == Weapon.Warhammer:
+            self.dmgType = 'Bludgeoning'
+          if self.weapon == Weapon.Longsword:
             self.dmgType = 'Slashing'
           if self.weapon == Weapon.Spear:  
             self.dmgType = 'Piercing'
@@ -136,12 +233,12 @@ class combat:
       roll += 5
     if roll >= 20:
       print(f"You rolled a {roll} for attacking")
-      self.playerDmg = (player.dmg+ random.randint(1,10))*3
+      self.playerDmg = (player.dmg + random.randint(1,10) + player.dmgBonus)*player.critMultiplier
       opponent.hp = opponent.hp - self.playerDmg
       print(f"POWER LEVELS OVER 9000!!!")
     elif roll >= 15:
       print(f"You rolled a {roll} for attacking")
-      self.playerDmg = (player.dmg+ random.randint(1,10))*1.5
+      self.playerDmg = (player.dmg + random.randint(1,10)+ player.dmgBonus)*(player.critMultiplier/2)
       opponent.hp = opponent.hp - self.playerDmg
       print(f"Critical Hit!")
     elif roll < 10:
@@ -149,7 +246,7 @@ class combat:
       print("you missed!")
     else:
       print(f"You rolled a {roll} for attacking")
-      self.playerDmg = (player.dmg+ random.randint(1,10))
+      self.playerDmg = (player.dmg+ random.randint(1,10)+ player.dmgBonus)
       opponent.hp = opponent.hp - self.playerDmg
       print(f"You land a hit")
   def monsterTurn(self,player,opponent):
@@ -185,8 +282,11 @@ class combat:
 
     
 def playeracterSelect():
+  print("Let's start with your name: ") 
+  name = input()  
+  print("Good luck, " +name+ ".")  
   classes = ["Warrior","Rogue","Wizard"]
-  print("We'll need to start with your class. What kind of adventure are you?")
+  print("Nxt we'll need your class. What kind of adventure are you?")
   userInput = ""
   global player
   player = ()
@@ -194,20 +294,23 @@ def playeracterSelect():
     print("Options: Rogue/Warrior/Wizard")
     userInput = input()
     if userInput == "Rogue":
-      player = char('Rogue', 100, 10, 18, 10, 14, 16)
+      player = char('Rogue', name, 100, 10, 18, 12, 14, 16)
       playerStart()
     elif userInput == "Wizard":
-      player = char('Wizard', 75, 8, 10, 12, 18, 14)
+      player = char('Wizard', name, 75, 8, 10, 10, 18, 14)
       playerStart()
     elif userInput == "Warrior":
-      player = char('Warrior', 125, 18, 14, 14, 8, 10) 
+      player = char('Warrior', name, 125, 18, 14, 14, 8, 10) 
       playerStart()
     else: 
       print("Please enter a valid option.")
 
+
 def playerStart():
   actions = ["Left","Right","Forward"]
   player.selectThings()
+  player.xp += 10
+  levelUp()
   print("You begin in a dusty room made of cobbled stone. There are 3 paths.")
   userInput = ""
   while userInput not in actions:
@@ -253,16 +356,13 @@ def ghoulGames():
           print("Your trained eyes, now heightened by the amulet, notice the seems of a small trapdoor below the ringmaster.")
           print("Unable to resist the same curiosity that brought you deep underground you slip into the hatch, barely able")
           print("to hear the ringmaster's cries of protest behind you")
-          print()
-          print()
-          print()
-          time.sleep(4)
+          input("press enter to continue")
           treasureRoom()
       else:
         print("You make it part way through the course but you lose your grip on a rope and fall")
         print("partially into a pool of lava, singeing your leg")
         print("'Bah, what a poor showing. You must die for wasting my audience's valuable time'")
-        player.hp = player.hp - 10
+        player.hp = player.hp - 15
         checkForDead()
         vsGhoul() 
     elif userInput == "Turn and run":
@@ -277,20 +377,21 @@ def ghoulGames():
 def vsGhoul():
   actions = ["Small trapdoor","Doorway"]
   print("hohoho, I see you have chosen death, young adventurer.")
-  ghoul = monster('ghoul', 225, 8, Spell  , Resistance, 10 )
+  ghoul = monster('ghoul', 225, 8, ['Fire','Cold'], Resistance, 10 )
   currentCombat = combat() 
+  input("Press enter to continue ")
   while not currentCombat.gameOver:
-    print("Type Next to begin next round ")
     currentCombat.newRound()
     currentCombat.takeTurn(player,ghoul)
     currentCombat.monsterTurn(player,ghoul)
     currentCombat.displayResult(player,ghoul)
     currentCombat.checkWin(player,ghoul)
     input("Press enter to continue")
+    levelUp()
   print("""As the ghoul dies he drifts apart into whisps "Beware the beast that lays within, you don't know the powers you play with" """)
   print("""
-    A small hatch pop open from underneath where the ghost died. You think you can see treasure down there but you're not too sure.
-    you also notice a door off to the side that looks much less rewarding, but also much less ominous
+  A small hatch pop open from underneath where the ghost died. You think you can see treasure down there but you're not too sure.
+  You also notice a door off to the side that looks much less rewarding, but also much less ominous.
   """)
   print("Options: Small trapdoor/Doorway ")
   userInput = ""
@@ -306,10 +407,10 @@ def vsGhoul():
 def treasureRoom():
   actions = ["Take sword", "Take armor", "Take wand"]
   print("""
-    As you duck down into the trapdoor you're greeted by luminescent piles of gold, amongst which you spy 
-    multiple magic weapons. You get the feeling that these are powerful enough that you can probably only handle using one of them.
-    There's a a jagged and cruel looking sword cut from obsidian, some well crafted dwarven platemail, and a steel wand inlayed with 
-    saphires all resting on pedestals
+  As you duck down into the trapdoor you're greeted by luminescent piles of gold, amongst which you spy 
+  multiple magic weapons. You get the feeling that these are powerful enough that you can probably only handle using one of them.
+  There's a a jagged and cruel looking sword cut from obsidian, some well crafted dwarven platemail, and a steel wand inlayed with 
+  saphires all resting on pedestals
   """)
   userInput = ""
   while userInput not in actions:
@@ -317,30 +418,33 @@ def treasureRoom():
     ending = "Taking your newfound item you travel through a plain wood door at the end of the room, deeper into the catacombs."
     if userInput == "Take sword":
       print("""
-        As you grasp the hilt the hilt of the black stone blade you feel infernal strength race through you. You feel both stronger and as though you 
-        would take less damage from fire.
+      As you grasp the hilt the hilt of the black stone blade you feel infernal strength race through you. You feel both stronger and as though you 
+      would take less damage from fire.
       """)
       player.resistance = 'Fire'
+      player.dmgBonus = 8
       player.strength += 5
+      calcStats()
       player.dexterity += 2 
       print(ending)
       dungeon() 
     if userInput == "Take armor":
       print(""" 
-        Picking up the heavy suit of armor feels like a momentous task, let alone donning it. Thankfully, after some manuevering you manage to get it on
-        you definetly feel like regardless of whats attacking you this will help prevent damage.  
+      Picking up the heavy suit of armor feels like a momentous task, let alone donning it. Thankfully, after some manuevering you manage to get it on
+      you definately feel like regardless of whats attacking you this will help prevent damage.  
       """)
       player.dmgStop = 5
       print(ending)
       dungeon()
     if userInput == "Take wand":
       print(""" 
-        As you pick up the wand you feel a jolt of electricity course through you, your senses seem to be moving faster. 
-        or at least everything else seems slower. Your magic feels more powerful as well  
+      As you pick up the wand you feel a jolt of electricity course through you, your senses seem to be moving faster. 
+      or at least everything else seems slower. Your magic feels more powerful as well  
       """)
       player.wisdom += 2
       player.intelligence += 2
-      player.dmg += 2 
+      player.dmg = 10 + player.intelligence
+      player.dmgBonus += 4 
       print(ending)
       dungeon()
     else:
@@ -352,9 +456,10 @@ def treasureRoom():
 def trollBridge():
   actions = ["Answer the riddle","Fight the troll","Turn back", "Jump across"]
   print("""
-    As you wander through the tunnels you reach a wide chamber with a large chasm nearly 20 ft across crossing through it, thankfully there's a well built stone bridge crossing it.
-    The only issue is that there's a lorge troll standing in the middle of the bridge, munching on an apple. 'Why hello there little one, you must want to be exploring of the dungeon, yes? 
-    I'm sorry to say that I only let people who answer my riddle pass' declares the troll. While he doesn't seem particularly hostile the troll is quite large and has what appears to be a large mace sitting next to him. 
+  As you wander through the tunnels you reach a wide chamber with a large chasm nearly 20 ft across crossing through it, thankfully there's a well built stone bridge crossing it.
+  The only issue is that there's a lorge troll standing in the middle of the bridge, munching on an apple. 'Why hello there little one, you must want to be exploring of the dungeon, yes? 
+  I'm sorry to say that I only let people who answer my riddle pass' declares the troll. 
+  While he doesn't seem particularly hostile the troll is quite large and has what appears to be a large mace sitting next to him. 
   """)
 
   userInput = ""
@@ -391,18 +496,23 @@ def trollBridge():
         if answer not in playerAnswer:
           print("Sorry, but that's not it")
           attempts += 1 
+## toDo - Make an option to double down for a reward
+      print(f"'Oh excellent, so well done little {player.name}. Here, you may cross my bridge' the troll steps aside and lets you pass")
+      print("As you turn away from the troll and continue down the passage the air thickens and you think you hear voices ahead")
+      input("press enter to continue")
+      cultGathering() 
     elif userInput == "Jump across":
       print("You decide that you'd rather trust your own athleticism than the word of a troll or his bridge")
       if player.strength >= 20 or player.dexterity >= 20:
         print("You make a running jump and manage to sail over the chasm. Tucking into a roll on the other side you rapidly pop to your feet.")
-        print("the troll turns around 'Oh ho, I see. Well aren't you quite the individual, don't even need my bridge. Perhaps you could could actually survive what lay ahead.")
+        print("The troll turns around 'Oh ho, I see. Well aren't you quite the individual, don't even need my bridge. Perhaps you could could actually survive what lay ahead.")
         print("As you turn away from the troll and continue down the passage the air thickens and you think you hear voices ahead")
-        time.sleep(2)
+        input("press enter to continue")
         cultGathering() 
       else:
         print("""
-          Unfortunately you overestimated you abilities and while you do make a running jump you realize all too late that you aren't going to make it.
-          You tumble down into the darkness
+        Unfortunately you overestimated you abilities and while you do make a running jump you realize all too late that you aren't going to make it.
+        You tumble down into the darkness.
         """)
         player.hp -= 40
         checkForDead()
@@ -421,10 +531,56 @@ def trollBridge():
   quit() 
 
 def trollFight ():
-  troll = monster('troll', 400, 12, Spell , Shield, 15)
-
-
-
+  troll = monster('troll', 400, 12, ['Fire','Slashing'], Shield, 25)
+  actions = ["Climb down", "Enter the cave", "Pickup the mace"]
+  currentCombat = combat()
+  input("Press enter to continue ")
+  while not currentCombat.gameOver:
+    currentCombat.newRound()
+    currentCombat.takeTurn(player,troll)
+    currentCombat.monsterTurn(player,troll)
+    currentCombat.displayResult(player,troll)
+    currentCombat.checkWin(player,troll)
+    input("Press enter to continue")
+    levelUp()
+  print("""
+  The troll crashes to the ground, dropping his mace, deafeated. You see the yawning passsage way beyond the bridge is dimly lit and appears to almost be
+  leaking darkness into the rest of the room. With the door locked behind you the only other option seems to be down the pit beneath the bridge. There's a well worn 
+  rope tied to the edge that you could maybe shimmy down, but it would be very difficult. Also, the trolls mace rests heavily on the ground. It's incredibly massive but you
+  could try to lift it...
+  """)
+  userInput = ""
+  while userInput not in actions:
+    print("Options: Climb down/Enter the cave/Pickup the mace")
+    userInput = input()
+    if userInput == "Climb down":
+      if player.dexterity >= 20 or player.strength >= 24:
+        print("You nimbly wind your way down the rope into the darkness")
+        dungeon()
+      else:
+        print("Unfortunately your hands slip and you lose grip on the rope, tumbling into the dark.")
+        player.hp = player.hp - 30
+        dungeon()
+    elif userInput == "Enter the cave":
+      cultGathering()
+    elif userInput == "Pickup the mace":
+      if player.strength >= 22:
+        print("Thanks to your absolute immensity you manage to heave the mace over your shoulder. This thing probably deals some serious damage")
+        player.dmgBonus = 15
+        player.dmgType = 'Bludgeoning'
+        player.weapon = 'Troll Mace'
+        playerAnswer = input("Options: Climb down/Enter the cave")
+        if playerAnswer == "Climb down":
+          dungeon()
+        elif playerAnswer == "Enter the cave":
+          cultGathering()
+        else:
+          print("please enter a valid option")
+      else:
+        print("You find that you can barely budge the mace, let alone lift it. Sadge.")
+        userInput = ""
+    else:
+      print("please enter a valid option")
 
 
 def longHallway(): 
@@ -458,6 +614,8 @@ def longHallway():
           "Ecliptic beam" 
         """)
         player.spell = "EclipticBeam"
+        player.dmgType = 'Dark'
+        player.dmgBonus = 10
       else:
         print("""
           As you get within range of touching the wall the voices grow so loud that they begin to drown out your thoughts
@@ -472,6 +630,13 @@ def longHallway():
     else:
       print("Please enter a valid option")
 
+## toDo - denOfTheBeast, dungeon, cultGathering -- dungeon should have chest that requires rogue tools
+## toD0 - Make list of weapons into a dictionary so I can jsut add new weapons with new types whenever and have it be easier
+## toDo - made weaknesses into a list instead of jsut one input. see if that breaks everything??
+def dungeon():
+  quit()
+      
+
 if __name__ == "__main__":
     
   while True:
@@ -482,12 +647,6 @@ if __name__ == "__main__":
     print("As an avid traveler, you have decided to visit the Catacombs of a nearby temple.")
     
     print("However, during your exploration, you find yourself lost.")
-    
-    print("Let's start with your name: ")
-    
-    name = input()
-    
-    print("Good luck, " +name+ ".")
     
     playeracterSelect()
 
