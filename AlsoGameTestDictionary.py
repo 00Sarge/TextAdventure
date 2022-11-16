@@ -2,7 +2,7 @@
 import random
 import time
 from enum import Enum
-
+from os import system, name
 from pynput.keyboard import Key, Listener
 
 #Lists for potential inventory systems
@@ -16,6 +16,8 @@ Spells = {}
 Tools = {}
 Shields = {}
 Resistances = {}
+Weapons["Fist"] = {"Name": "Fist", "dmgBonus": 2, "dmgType": "Bludgeoning"}
+Weapons["BatFist"] = {"Name": "BatFist", "dmgBonus": 20, "dmgType": "Kill"}
 Weapons["TrollMace"] = {"Name": "TrollMace", "dmgBonus": 20, "dmgType": "Bludgeoning"}
 Weapons["Longsword"] = {"Name": "Longsword","dmgBonus": 5, "dmgType": "Slashing"}
 Weapons["Warhammer"] = {"Name": "Warhammer","dmgBonus": 5, "dmgType": "Bludgeoning"}
@@ -25,6 +27,7 @@ Spells["Fireball"] = {"Name": "Fire ball","dmgBonus": 8, "dmgType": "Fire"}
 Spells["IceStorm"] = {"Name": "Ice storm","dmgBonus": 8, "dmgType": "cold"}
 Spells["LightningBolt"] = {"Name": "Lightning bolt","dmgBonus": 12, "dmgType": "Lightning"}
 Spells["EclipticBeam"] = {"Name": "Ecliptic beam","dmgBonus": 30, "dmgType": "Dark"}
+Spells["NoMagic"] = {"Name": "No Magic for you", "dmgBonus": 2, "dmgType": "bad"}
 
 def checkForDead():
   if player.hp <= 0:
@@ -73,11 +76,11 @@ def levelUp():
       increases += 1
     calcStats()
     player.hp = player.maxhp
-    print("You feel invigorated by your level up.")
+    print("You feel invigorated by your level up. Health restored!")
     levelUp()
   else:
     pass
-  
+  system('cls')
 #toDo - Make a printStats functions to display stats, and a calcStats to reintialize stats
 def calcStats():
   player.conModifier = player.constitution/10
@@ -148,10 +151,10 @@ class char:
         self.constitution = constitution
         self.intelligence = intelligence
         self.wisdom = wisdom
-        self.weapon = None 
+        self.weapon = Weapons["Fist"] 
         self.shield = None  
         self.tool = None 
-        self.spell = None
+        self.spell = Spells["NoMagic"]
         self.resistance = None 
         self.dmg = 10
         self.dmgType = None
@@ -168,74 +171,96 @@ class char:
     def __str__(self):
         return f"{self.race}{self.weapon}{self.shield}{self.tool}{self.spell}{self.resistance}{self.dmgType}{self.name}()"
     def selectThings(self):
-        if self.race == "Warrior":
-          weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
-          weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
-          choice = int(input(f"Choose your weapon {weapons}:  "))
-          self.weapon = Weapon(choice)
-          if self.weapon == Weapon.Warhammer:
-            self.weapon = Weapons["Warhammer"]
-            self.dmgType = self.weapon["dmgType"]
-            self.dmgBonus = self.weapon["dmgBonus"]
-          if self.weapon == Weapon.Longsword:
-            self.weapon = Weapons["Longsword"]
-            self.dmgType = self.weapon["dmgType"]
-            self.dmgBonus = self.weapon["dmgBonus"]
-          if self.weapon == Weapon.Spear:  
-            self.weapon = Weapons["Spear"]
-            self.dmgType = self.weapon["dmgType"]
-            self.dmgBonus = self.weapon["dmgBonus"]
-          shields = [f"{shield.value}-{shield.name}" for shield in Shield]
-          shields = ", ".join(shields[:-1]) + " or " + shields[-1]
-          choice = int(input(f"Choose your shield {shields}:  "))
-          self.shield = Shield(choice)
-          self.dmg += self.strength
-          print("You're stronging, Sir")
+        if self.name == "Wayne":
+          print("Excellent choice sir, Batman mode activated")
+          self.maxhp = 200
+          self.hp = 200
+          self.strength = 40
+          self.dexterity = 40
+          self.constitution = 40
+          self.intelligence = 40
+          self.wisdom = 40
+          self.weapon = Weapons["BatFist"] 
+          self.shield = None  
+          self.tool = Tools(1) 
+          self.spell = Spells["EclipticBeam"]
+          self.resistance = "Fire"
+          self.dmg = 20
+          self.dmgType = None
+          self.xp = 0 
+          self.dmgStop = 0 
+          self.dmgBonus = 0
+          calcStats()
+          printStats()
+        else:
+          if self.race == "Warrior":
+            weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
+            weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
+            choice = int(input(f"Choose your weapon {weapons}:  "))
+            self.weapon = Weapon(choice)
+            if self.weapon == Weapon.Warhammer:
+              self.weapon = Weapons["Warhammer"]
+              self.dmgType = self.weapon["dmgType"]
+              self.dmgBonus = self.weapon["dmgBonus"]
+            if self.weapon == Weapon.Longsword:
+              self.weapon = Weapons["Longsword"]
+              self.dmgType = self.weapon["dmgType"]
+              self.dmgBonus = self.weapon["dmgBonus"]
+            if self.weapon == Weapon.Spear:  
+              self.weapon = Weapons["Spear"]
+              self.dmgType = self.weapon["dmgType"]
+              self.dmgBonus = self.weapon["dmgBonus"]
+            shields = [f"{shield.value}-{shield.name}" for shield in Shield]
+            shields = ", ".join(shields[:-1]) + " or " + shields[-1]
+            choice = int(input(f"Choose your shield {shields}:  "))
+            self.shield = Shield(choice)
+            self.dmg += self.strength
+            print("You're stronging, Sir")
 
-        elif self.race == "Wizard":
-          spells = [f"{spell.value}-{spell.name}" for spell in Spell]
-          spells = ", ".join(spells[:-1]) + " or " + spells[-1]
-          choice = int(input(f"Choose your weapon {spells}:  "))
-          self.spell = Spell(choice)
-          if self.spell == Spell.Fireball:           
-            self.spell = Spells["Fireball"]
-            self.dmgType = self.spell["dmgType"]
-          if self.spell == Spell.IceStorm:
-            self.spell = Spells["IceStorm"]
-            self.dmgType = self.spell["dmgType"]
-          if self.spell == Spell.LightningBolt:
-            self.spell = Spells["LightningBolt"]
-            self.dmgType = self.spell["dmgType"]
-          resistances = [f"{resistance.value}-{resistance.name}" for resistance in Resistance]
-          resistances = ", ".join(resistances[:-1]) + " or " + resistances[-1]
-          choice = int(input(f"Choose your shield {resistances}:  "))
-          self.resistance = Resistance(choice)
-          self.dmg += self.intelligence
-          print("May your magic burn bright")
+          elif self.race == "Wizard":
+            spells = [f"{spell.value}-{spell.name}" for spell in Spell]
+            spells = ", ".join(spells[:-1]) + " or " + spells[-1]
+            choice = int(input(f"Choose your weapon {spells}:  "))
+            self.spell = Spell(choice)
+            if self.spell == Spell.Fireball:           
+              self.spell = Spells["Fireball"]
+              self.dmgType = self.spell["dmgType"]
+            if self.spell == Spell.IceStorm:
+              self.spell = Spells["IceStorm"]
+              self.dmgType = self.spell["dmgType"]
+            if self.spell == Spell.LightningBolt:
+              self.spell = Spells["LightningBolt"]
+              self.dmgType = self.spell["dmgType"]
+            resistances = [f"{resistance.value}-{resistance.name}" for resistance in Resistance]
+            resistances = ", ".join(resistances[:-1]) + " or " + resistances[-1]
+            choice = int(input(f"Choose your shield {resistances}:  "))
+            self.resistance = Resistance(choice)
+            self.dmg += self.intelligence
+            print("May your magic burn bright")
 
-        elif self.race == "Rogue":
-          weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
-          weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
-          choice = int(input(f"Choose your weapon {weapons}:  "))
-          self.weapon = Weapon(choice)
-          if self.weapon == Weapon.Warhammer:
-            self.weapon = Weapons["Warhammer"]
-            self.dmgType = self.weapon["dmgType"]
-            self.dmgBonus = self.weapon["dmgBonus"]
-          if self.weapon == Weapon.Longsword:
-            self.weapon = Weapons["Longsword"]
-            self.dmgType = self.weapon["dmgType"]
-            self.dmgBonus = self.weapon["dmgBonus"]
-          if self.weapon == Weapon.Spear:  
-            self.weapon = Weapons["Spear"]
-            self.dmgType = self.weapon["dmgType"]
-            self.dmgBonus = self.weapon["dmgBonus"]
-          tools = [f"{tool.value}-{tool.name}" for tool in Tool]
-          tools = ", ".join(tools[:-1]) + " or " + tools[-1]
-          choice = int(input(f"Choose your shield {tools}:  "))
-          self.tool = Tool(choice)
-          self.dmg += self.dexterity
-          print("Happy hunting")
+          elif self.race == "Rogue":
+            weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
+            weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
+            choice = int(input(f"Choose your weapon {weapons}:  "))
+            self.weapon = Weapon(choice)
+            if self.weapon == Weapon.Warhammer:
+              self.weapon = Weapons["Warhammer"]
+              self.dmgType = self.weapon["dmgType"]
+              self.dmgBonus = self.weapon["dmgBonus"]
+            if self.weapon == Weapon.Longsword:
+              self.weapon = Weapons["Longsword"]
+              self.dmgType = self.weapon["dmgType"]
+              self.dmgBonus = self.weapon["dmgBonus"]
+            if self.weapon == Weapon.Spear:  
+              self.weapon = Weapons["Spear"]
+              self.dmgType = self.weapon["dmgType"]
+              self.dmgBonus = self.weapon["dmgBonus"]
+            tools = [f"{tool.value}-{tool.name}" for tool in Tool]
+            tools = ", ".join(tools[:-1]) + " or " + tools[-1]
+            choice = int(input(f"Choose your tool {tools}:  "))
+            self.tool = Tool(choice)
+            self.dmg += self.dexterity
+            print("Happy hunting")
           
 #same as the above character template but for monsters, much shorter
 class monster:
@@ -279,7 +304,7 @@ class combat:
       print(f"You rolled a {roll} for attacking")
       self.playerDmg = (player.dmg + random.randint(1,10))*player.critMultiplier
       opponent.hp = opponent.hp - self.playerDmg
-      print(f"POWER LEVELS OVER 9000!!!")
+      print("\033[31mPOWER LEVELS OVER 9000!!\033[0m")
     elif roll >= 15:
       print(f"You rolled a {roll} for attacking")
       self.playerDmg = (player.dmg + random.randint(1,10))*(player.critMultiplier/2)
@@ -300,7 +325,7 @@ class combat:
       roll += 5 
     if roll >= 15:
       print(f"You rolled a {roll} for defense ") 
-      print(f"Tanked that hit like a boss")
+      print("\033[32mTanked that hit like a boss\033[0m")
       self.opponentDmg = ((opponent.damage + random.randint(1,10))/2) - player.dmgStop
       player.hp = player.hp - self.opponentDmg
     else:
@@ -472,7 +497,7 @@ def treasureRoom():
       calcStats()
       print(ending)
       dungeon() 
-    if userInput == "Take armor":
+    elif userInput == "Take armor":
       print(""" 
       Picking up the heavy suit of armor feels like a momentous task, let alone donning it. Thankfully, after some manuevering you manage to get it on
       you definately feel like regardless of whats attacking you this will help prevent damage.  
@@ -480,7 +505,7 @@ def treasureRoom():
       player.dmgStop = 5
       print(ending)
       dungeon()
-    if userInput == "Take wand":
+    elif userInput == "Take wand":
       print(""" 
       As you pick up the wand you feel a jolt of electricity course through you, your senses seem to be moving faster. 
       or at least everything else seems slower. Your magic feels more powerful as well  
@@ -522,6 +547,7 @@ def trollBridge():
       Wind is my foe.
       
       What am I?
+
       It's really good isn't it? I came up with it myself!'
       """)
       playerAnswer = ""
@@ -563,6 +589,7 @@ def trollBridge():
         checkForDead()
         ## toDo - make a race system that gives abilities and stats
         print("Thankfully you were in good enough shape to survive the fall. You slowly come to crumpled in the dark on cobbles wet with your blood")
+        time.sleep(2)
         dungeon()
     elif userInput == "Fight the troll":
       print("You draw your breath and prepare for battle hopeing to get the first strike in before the eventual battle.")
@@ -576,6 +603,7 @@ def trollBridge():
   quit() 
 
 def trollFight ():
+  system('cls')
   troll = monster('troll', 400, 12, ['Fire','Slashing'], Shield, 25)
   actions = ["Climb down", "Enter the cave", "Pickup the mace"]
   currentCombat = combat()
@@ -631,6 +659,7 @@ def trollFight ():
 
 
 def longHallway(): 
+  system('cls')
   actions = ["Approach the door","Investigate the walls","Turn and run"]
   print("You step into a long hallway, dimly lit and dank. The walls seems to covered in a scrawl that looks like a language, though not one that you know")
   print("At the end of the hallway you see a tall door carved of ebony.")
@@ -680,8 +709,8 @@ def longHallway():
         print("""
         As you get within range of touching the wall the voices grow so loud that they begin to drown out your thoughts
         until all you can experience is the mania that rolls over you. You stumble into the wall and hit your head on the stone, knocking yourself out.
-        When you come too it the wall seems perfectly mundane and you can't see any writing. You feel like a bit of sanity has left your body but 
-        perhaps you gained a bit of knowledge. As you walk away from the wall you begin to hear the whispers again...
+        When you come too it the wall seems perfectly mundane and you can't see any writing. You feel like a bit of your sanity has been crippled. But, perhaps, you gained a bit of knowledge. 
+        As you walk away from the wall you begin to hear the whispers again...
         """)
         player.wisdom = player.wisdom - 2
         player.intelligence = player.intelligence + 1
@@ -694,11 +723,54 @@ def longHallway():
       print("Please enter a valid option")
 
 ## toDo - denOfTheBeast, dungeon, cultGathering -- dungeon should have chest that requires rogue tools
-## toD0 - Make list of weapons into a dictionary so I can jsut add new weapons with new types whenever and have it be easier
-## toDo - made weaknesses into a list instead of jsut one input. see if that breaks everything??
+## toD0 - Make list of weapons into a dictionary so I can jsut add new weapons with new types whenever and have it be easier(done)
+## toDo - made weaknesses into a list instead of just one input. see if that breaks everything??(It sort of does)
 def dungeon():
+  actions = ["Help Prisoner", "Investigate Chest", "Continue Down"]
+  chestUnlocked = False
+  vampire = monster("vampire", 50, 12, Spells, Shields, 15)
+  userInput = ""
+  print(""" 
+  You find yourself in the middle of what could only be a dungeon. The ceiling is caved in, allowing for a trickle of light from above. Softly illuminating a dank passageway 
+  lined with the iron bars of prison cells, that continues long into the dark. In one of the cells you see an ironbound chest, but you're not sure you can brute force these
+  bars or this chest. Another cell seems to have a prisoner hanging by chains. The bedraggled figure dangles from their wrists, barely alive.
+  From further ahead you hear breath. Breath that echoes between the walls and leaves your mind feeling empty, a deep and primal rasp. Something is sleeping.
+  """)
+  while userInput not in actions:
+    userInput = input("Options: Help Prisoner/Investigate Chest/Continue Down") 
+    if userInput == "Help Prisoner":
+      prisonerOptions = ["Help with the manacles", "Leave him be"]
+      prisonerInput = ""
+      while prisonerInput not in prisonerOptions:
+        print(""" You cross the hallway and approach the groaning prisoner. He dangles by locked iron manacles "Oh, hello there. Is that someone? It's been so long
+        I can hardly see anymore." he creaks. "Will you help me?" """)
+        if player.wisdom >= 18:
+          print("As you listen to the man you get an eery feeling from him. Some part of this individual seems coiled to strike.")
+        prisonerInput = input("Options: Help with the manacles/Leave him be ")  
+        if prisonerInput == "Help with the manacles":
+          print(""""As you approach the prisoner he cackles "Bahah, someone is a bit too trusting." The manacles detach from the walls, elongating, shifting, and hardening
+          until they ressemble spikes made of bone prottruding from the forearms of the prisoner. With teeth now bared to reveal large fangs, the vampire lunges. 
+          """)
+          vampireFight()
+        elif prisonerInput == "Leave him be":
+          print(""" "Wait, wait, are you just leaving me? I can help you! You'll never live if you go alone." """)
+          dungeon()
+        else:
+          print("please enter a valid option")
+    elif userInput == "Investigate Chest":
+      quit()
+    elif userInput == "Continue Down":
+      quit()
+    else:
+      print("please enter a valid option.")
+    
+
+def cultGathering():
   quit()
-      
+
+def denOfTheBeast():
+  quit()
+
 
 if __name__ == "__main__":
     
