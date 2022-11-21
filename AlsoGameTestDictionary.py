@@ -171,96 +171,74 @@ class char:
     def __str__(self):
         return f"{self.race}{self.weapon}{self.shield}{self.tool}{self.spell}{self.resistance}{self.dmgType}{self.name}()"
     def selectThings(self):
-        if self.name == "Wayne":
-          print("Excellent choice sir, Batman mode activated")
-          self.maxhp = 200
-          self.hp = 200
-          self.strength = 40
-          self.dexterity = 40
-          self.constitution = 40
-          self.intelligence = 40
-          self.wisdom = 40
-          self.weapon = Weapons["BatFist"] 
-          self.shield = None  
-          self.tool = Tools(1) 
-          self.spell = Spells["EclipticBeam"]
-          self.resistance = "Fire"
-          self.dmg = 20
-          self.dmgType = None
-          self.xp = 0 
-          self.dmgStop = 0 
-          self.dmgBonus = 0
-          calcStats()
-          printStats()
-        else:
-          if self.race == "Warrior":
-            weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
-            weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
-            choice = int(input(f"Choose your weapon {weapons}:  "))
-            self.weapon = Weapon(choice)
-            if self.weapon == Weapon.Warhammer:
-              self.weapon = Weapons["Warhammer"]
-              self.dmgType = self.weapon["dmgType"]
-              self.dmgBonus = self.weapon["dmgBonus"]
-            if self.weapon == Weapon.Longsword:
-              self.weapon = Weapons["Longsword"]
-              self.dmgType = self.weapon["dmgType"]
-              self.dmgBonus = self.weapon["dmgBonus"]
-            if self.weapon == Weapon.Spear:  
-              self.weapon = Weapons["Spear"]
-              self.dmgType = self.weapon["dmgType"]
-              self.dmgBonus = self.weapon["dmgBonus"]
-            shields = [f"{shield.value}-{shield.name}" for shield in Shield]
-            shields = ", ".join(shields[:-1]) + " or " + shields[-1]
-            choice = int(input(f"Choose your shield {shields}:  "))
-            self.shield = Shield(choice)
-            self.dmg += self.strength
-            print("You're stronging, Sir")
+        if self.race == "Warrior":
+          weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
+          weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
+          choice = int(input(f"Choose your weapon {weapons}:  "))
+          self.weapon = Weapon(choice)
+          if self.weapon == Weapon.Warhammer:
+            self.weapon = Weapons["Warhammer"]
+            self.dmgType = self.weapon["dmgType"]
+            self.dmgBonus = self.weapon["dmgBonus"]
+          if self.weapon == Weapon.Longsword:
+            self.weapon = Weapons["Longsword"]
+            self.dmgType = self.weapon["dmgType"]
+            self.dmgBonus = self.weapon["dmgBonus"]
+          if self.weapon == Weapon.Spear:  
+            self.weapon = Weapons["Spear"]
+            self.dmgType = self.weapon["dmgType"]
+            self.dmgBonus = self.weapon["dmgBonus"]
+          shields = [f"{shield.value}-{shield.name}" for shield in Shield]
+          shields = ", ".join(shields[:-1]) + " or " + shields[-1]
+          choice = int(input(f"Choose your shield {shields}:  "))
+          self.shield = Shield(choice)
+          self.dmg += self.strength
+          print("You're stronging, Sir")
 
-          elif self.race == "Wizard":
-            spells = [f"{spell.value}-{spell.name}" for spell in Spell]
-            spells = ", ".join(spells[:-1]) + " or " + spells[-1]
-            choice = int(input(f"Choose your weapon {spells}:  "))
-            self.spell = Spell(choice)
-            if self.spell == Spell.Fireball:           
-              self.spell = Spells["Fireball"]
-              self.dmgType = self.spell["dmgType"]
-            if self.spell == Spell.IceStorm:
-              self.spell = Spells["IceStorm"]
-              self.dmgType = self.spell["dmgType"]
-            if self.spell == Spell.LightningBolt:
-              self.spell = Spells["LightningBolt"]
-              self.dmgType = self.spell["dmgType"]
-            resistances = [f"{resistance.value}-{resistance.name}" for resistance in Resistance]
-            resistances = ", ".join(resistances[:-1]) + " or " + resistances[-1]
-            choice = int(input(f"Choose your shield {resistances}:  "))
-            self.resistance = Resistance(choice)
-            self.dmg += self.intelligence
-            print("May your magic burn bright")
+        elif self.race == "Wizard":
+          spells = [f"{spell.value}-{spell.name}" for spell in Spell]
+          spells = ", ".join(spells[:-1]) + " or " + spells[-1]
+          choice = int(input(f"Choose your weapon {spells}:  "))
+          self.spell = Spell(choice)
+          if self.spell == Spell.Fireball:           
+            self.spell = Spells["Fireball"]
+            self.dmgType = self.spell["dmgType"]
+          if self.spell == Spell.IceStorm:
+            self.spell = Spells["IceStorm"]
+            self.dmgType = self.spell["dmgType"]
+          if self.spell == Spell.LightningBolt:
+            self.spell = Spells["LightningBolt"]
+            self.dmgType = self.spell["dmgType"]
+          resistances = [f"{resistance.value}-{resistance.name}" for resistance in Resistance]
+          resistances = ", ".join(resistances[:-1]) + " or " + resistances[-1]
+          choice = int(input(f"Choose your shield {resistances}:  "))
+          self.resistance = Resistance(choice)
+          self.dmg += self.intelligence
+          print("May your magic burn bright")
 
-          elif self.race == "Rogue":
-            weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
-            weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
-            choice = int(input(f"Choose your weapon {weapons}:  "))
-            self.weapon = Weapon(choice)
-            if self.weapon == Weapon.Warhammer:
-              self.weapon = Weapons["Warhammer"]
-              self.dmgType = self.weapon["dmgType"]
-              self.dmgBonus = self.weapon["dmgBonus"]
-            if self.weapon == Weapon.Longsword:
-              self.weapon = Weapons["Longsword"]
-              self.dmgType = self.weapon["dmgType"]
-              self.dmgBonus = self.weapon["dmgBonus"]
-            if self.weapon == Weapon.Spear:  
-              self.weapon = Weapons["Spear"]
-              self.dmgType = self.weapon["dmgType"]
-              self.dmgBonus = self.weapon["dmgBonus"]
-            tools = [f"{tool.value}-{tool.name}" for tool in Tool]
-            tools = ", ".join(tools[:-1]) + " or " + tools[-1]
-            choice = int(input(f"Choose your tool {tools}:  "))
-            self.tool = Tool(choice)
-            self.dmg += self.dexterity
-            print("Happy hunting")
+        elif self.race == "Rogue":
+          weapons = [f"{weapon.value}-{weapon.name}" for weapon in Weapon]
+          weapons = ", ".join(weapons[:-1]) + " or " + weapons[-1]
+          choice = int(input(f"Choose your weapon {weapons}:  "))
+          self.weapon = Weapon(choice)
+          if self.weapon == Weapon.Warhammer:
+            self.weapon = Weapons["Warhammer"]
+            self.dmgType = self.weapon["dmgType"]
+            self.dmgBonus = self.weapon["dmgBonus"]
+          if self.weapon == Weapon.Longsword:
+            self.weapon = Weapons["Longsword"]
+            self.dmgType = self.weapon["dmgType"]
+            self.dmgBonus = self.weapon["dmgBonus"]
+          if self.weapon == Weapon.Spear:  
+            self.weapon = Weapons["Spear"]
+            self.dmgType = self.weapon["dmgType"]
+            self.dmgBonus = self.weapon["dmgBonus"]
+          tools = [f"{tool.value}-{tool.name}" for tool in Tool]
+          tools = ", ".join(tools[:-1]) + " or " + tools[-1]
+          choice = int(input(f"Choose your tool {tools}:  "))
+          self.tool = Tool(choice)
+          self.dmg += self.dexterity
+          print("Happy hunting")
           
 #same as the above character template but for monsters, much shorter
 class monster:
