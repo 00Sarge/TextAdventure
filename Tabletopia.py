@@ -4,7 +4,7 @@ import time
 from enum import Enum
 from os import system, name
 from pynput.keyboard import Key, Listener
-
+#ToDo write a CAPS program to capitalize all input so that it doesn't matter how they enter their name
 #Lists for potential inventory systems
 Weapon = Enum("Weapon", "Longsword, Warhammer, Spear")
 Spell = Enum("Spells", "Fireball, IceStorm, LightningBolt")
@@ -510,9 +510,9 @@ def trollBridge():
 
   userInput = ""
   while userInput not in actions:
-    print("Options: Answer the riddle/Fight the troll/Turn back/Jump across")
+    print("Options: Answer/Fight/Turn back/Jump across")
     userInput = input()
-    if userInput == "Answer the riddle":
+    if userInput == "Answer":
       print("""'Ohh yes, this is very good, it's been a long time since something so living and fleshy wanted to talk to me. Here's the riddle:
       My life can be measured in hours,
 
@@ -569,7 +569,7 @@ def trollBridge():
         print("Thankfully you were in good enough shape to survive the fall. You slowly come to crumpled in the dark on cobbles wet with your blood")
         time.sleep(2)
         dungeon()
-    elif userInput == "Fight the troll":
+    elif userInput == "Fight":
       print("You draw your breath and prepare for battle hopeing to get the first strike in before the eventual battle.")
       trollFight()
     elif userInput == "Turn back":
@@ -581,7 +581,6 @@ def trollBridge():
   quit() 
 
 def trollFight ():
-  system('cls')
   troll = monster('troll', 400, 12, ['Fire','Slashing'], Shield, 25)
   actions = ["Climb down", "Enter the cave", "Pickup the mace"]
   currentCombat = combat()
@@ -731,7 +730,7 @@ def dungeon():
           """)
           vampireFight()
         elif prisonerInput == "Leave him be":
-          print(""" "Wait, wait, are you just leaving me? I can help you! You'll never live if you go alone." """)
+          print(""" "Wait, wait, are you just leaving me? I can help you! You'll never live if you go alone!" """)
           dungeon()
         else:
           print("please enter a valid option")
