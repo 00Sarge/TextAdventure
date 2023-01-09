@@ -4,7 +4,8 @@ import time
 from enum import Enum
 from os import system, name
 from pynput.keyboard import Key, Listener
-#ToDo write a CAPS program to capitalize all input so that it doesn't matter how they enter their name
+#ToDo - write a CAPS program to capitalize all input so that it doesn't matter how they enter their name
+#ToDo - Make validators into functions, make input into function with min and max acceptance stuff
 #Lists for potential inventory systems
 Weapon = Enum("Weapon", "Longsword, Warhammer, Spear")
 Spell = Enum("Spells", "Fireball, IceStorm, LightningBolt")
@@ -24,10 +25,10 @@ Weapons["Warhammer"] = {"Name": "Warhammer","dmgBonus": 5, "dmgType": "Bludgeoni
 Weapons["Spear"] = {"Name": "Spear","dmgBonus": 5, "dmgType": "Piercing"}
 Weapons["ObsidianEdge"] = {"Name": "Obsidian edge","dmgBonus": 15, "dmgType": ["Slashing", "Fire"]}
 Spells["Fireball"] = {"Name": "Fire ball","dmgBonus": 8, "dmgType": "Fire"}
-Spells["IceStorm"] = {"Name": "Ice storm","dmgBonus": 8, "dmgType": "cold"}
+Spells["IceStorm"] = {"Name": "Ice storm","dmgBonus": 8, "dmgType": "Cold"}
 Spells["LightningBolt"] = {"Name": "Lightning bolt","dmgBonus": 12, "dmgType": "Lightning"}
 Spells["EclipticBeam"] = {"Name": "Ecliptic beam","dmgBonus": 30, "dmgType": "Dark"}
-Spells["NoMagic"] = {"Name": "No Magic for you", "dmgBonus": 2, "dmgType": "bad"}
+Spells["NoMagic"] = {"Name": "No Magic for you", "dmgBonus": 2, "dmgType": "Bad"}
 
 def checkForDead():
   if player.hp <= 0:
@@ -165,6 +166,7 @@ class char:
         self.conModifier = self.constitution/10
         self.maxhp = self.maxhp*self.conModifier
         self.critMultiplier = self.dexterity/5
+        self.hpPotions = 0
 ## toDo - write a simple level up function that checks xp and then allows them to choose some stat increases and increases their HP
 ## toDo - make a calculate function that adds up damage and stats before fights to make things more progressive, con is a modifier to HP
 ## toDo - make it so weapons affect your dmg bonus, not dmg and thus don't stack
@@ -275,14 +277,14 @@ class combat:
   def takeTurn(self,player,opponent):
     roll = random.randint(1,20)
     self.playerDmg = 0 
-    if player.dmgType in opponent.weakness:
+    if player.dmgType == opponent.weakness:
       print("Your dmg type seems particularly strong against this monster, roll + 5!")
       roll += 5
     if roll >= 20:
       print(f"You rolled a {roll} for attacking")
       self.playerDmg = (player.dmg + random.randint(1,10))*player.critMultiplier
       opponent.hp = opponent.hp - self.playerDmg
-      print("\033[31mPOWER LEVELS OVER 9000!!\033[0m")
+      print("\033[1;31;40m POWER LEVELS OVER 9000!!! \n")  
     elif roll >= 15:
       print(f"You rolled a {roll} for attacking")
       self.playerDmg = (player.dmg + random.randint(1,10))*(player.critMultiplier/2)
@@ -298,7 +300,7 @@ class combat:
       print(f"You land a hit")
   def monsterTurn(self,player,opponent):
     roll = random.randint(1,20)
-    if player.resistance or player.shield in opponent.blockedBy:
+    if player.resistance == opponent.blockedBy or player.shield == opponent.blockedBy:
       print("Your defenses seem particularly strong against this creature, roll + 5!")
       roll += 5 
     if roll >= 15:
@@ -469,7 +471,7 @@ def treasureRoom():
       would take less damage from fire.
       """)
       player.resistance = 'Fire'
-      player.weapon = Weapons["EcplipticBeam"]
+      player.weapon = Weapons["ObsidianEdge"]
       player.strength += 5
       player.dexterity += 2 
       calcStats()
@@ -705,7 +707,6 @@ def longHallway():
 def dungeon():
   actions = ["Help Prisoner", "Investigate Chest", "Continue Down"]
   chestUnlocked = False
-  vampire = monster("vampire", 50, 12, Spells, Shields, 15)
   userInput = ""
   print(""" 
   You find yourself in the middle of what could only be a dungeon. The ceiling is caved in, allowing for a trickle of light from above. Softly illuminating a dank passageway 
@@ -735,9 +736,33 @@ def dungeon():
         else:
           print("please enter a valid option")
     elif userInput == "Investigate Chest":
-      quit()
+      chestInput = ""
+      chestOptions = ["Smash it","Pick Lock","Turn Away"]
+      while chestInput not in chestOptions:
+        print("As you stand in front of the chest it appears to be mildly rotten but it ")
+        chestInput = input("Options: Pick Lock/Smash it/Turn away")
+        if chestInput == "Turn away":
+          dungeon()
+        elif chestInput == "Pick Lock":
+          if chestUnlocked == False:
+            if player.tool == Tool["Lockpick"]:
+              print("You succesfully open the chest and pull out a small ornate crystalline bottle filled with a viscous red fluid inside. This health potion will save you from death once")
+              player.hpPotions += 1
+              chestUnlocked = True
+              dungeon() 
+          else:
+            print("The chest is already open, leave dweebus.")
+            dungeon()
+        elif chestInput == "Smash it":
+          if player.strength >= 20:
+            print("""Using your massive muscles you tear the chest in twain. Unfortunately you seem to have broken th small bottle that was in the chest.""")
+            dungeon()
+          else:
+            print("Unfortunately you're too weak. The chest sits there mockingly.")
+            dungeon()
     elif userInput == "Continue Down":
-      quit()
+      print("As you slowly walk down the corridor, away from the pleas of the prisoner, you feel an unnatural cold wash over you and hear chanting ahead.")
+      cultGathering()
     else:
       print("please enter a valid option.")
     
@@ -748,6 +773,9 @@ def cultGathering():
 def denOfTheBeast():
   quit()
 
+def vampireFight():
+  vampire = monster("vampire", 50, 12, Spells, Shields, 15)
+  quit()
 
 if __name__ == "__main__":
     
