@@ -374,8 +374,6 @@ def playerStart():
     else: 
       print("Please enter a valid option.")
 
-
-    
 #First room that you find by going forwards. Requires a stat check to pass the course
 #if they opt to fight or fail the course it initiates combat with the ghoul
 #upon completeing the games playeracters with a high wis stat can find a secret room
@@ -419,8 +417,7 @@ def ghoulGames():
       ghoulGames()
     else: 
       print("Please enter a valid option.")
-
-    
+   
 #First combat, player fights the ghoul and either dies or gains access to long hallway or treasure room
 
 def vsGhoul():
@@ -497,9 +494,7 @@ def treasureRoom():
       dungeon()
     else:
       print("please enter a valid option")
-
-    
-  quit()
+    quit()
   
 def trollBridge():
   actions = ["Answer the riddle","Fight the troll","Turn back", "Jump across"]
@@ -754,11 +749,16 @@ def dungeon():
             print("The chest is already open, leave dweebus.")
             dungeon()
         elif chestInput == "Smash it":
-          if player.strength >= 20:
-            print("""Using your massive muscles you tear the chest in twain. Unfortunately you seem to have broken th small bottle that was in the chest.""")
-            dungeon()
+          if chestUnlocked == False:
+            if player.strength >= 20:
+              print("""Using your massive muscles you tear the chest in twain. Unfortunately you seem to have broken th small bottle that was in the chest.""")
+              chestUnlocked == True
+              dungeon()
+            else:
+              print("Unfortunately you're too weak. The chest sits there mockingly.")
+              dungeon()
           else:
-            print("Unfortunately you're too weak. The chest sits there mockingly.")
+            print("The chest is already in pieces.")
             dungeon()
     elif userInput == "Continue Down":
       print("As you slowly walk down the corridor, away from the pleas of the prisoner, you feel an unnatural cold wash over you and hear chanting ahead.")
@@ -766,15 +766,26 @@ def dungeon():
     else:
       print("please enter a valid option.")
     
+def vampireFight():
+  vampire = monster("vampire", 50, 12, Spells, Shields, 15)
+  currentCombat = combat() 
+  input("Press enter to continue ")
+  while not currentCombat.gameOver:
+    currentCombat.newRound()
+    currentCombat.takeTurn(player,vampire)
+    currentCombat.monsterTurn(player,vampire)
+    currentCombat.displayResult(player,vampire)
+    currentCombat.checkWin(player,vampire)
+    input("Press enter to continue")
+    levelUp()
+  print("As you look around the small dungeon your fight with the vampire smashed the old chest, breaking whatever was inside. It looks like your only choice is to continue forward")
+  time.sleep(2)
+  cultGathering()
 
 def cultGathering():
   quit()
 
 def denOfTheBeast():
-  quit()
-
-def vampireFight():
-  vampire = monster("vampire", 50, 12, Spells, Shields, 15)
   quit()
 
 if __name__ == "__main__":
