@@ -64,21 +64,25 @@ def levelUp():
       if userChoice == 1:
         player.strength +=2
         print("Strength + 2!")
+        increases += 1
       elif userChoice == 2:
         player.dexterity +=2
         print("Dexterity + 2!")
+        increases += 1
       elif userChoice == 3:
         player.constitution +=2
         print("Constitution + 2!")
+        increases += 1
       elif userChoice == 4:
         player.intelligence +=2
         print("Intelligence + 2!")
+        increases += 1
       elif userChoice == 5:
         player.wisdom +=2
         print("Wisdom + 2!")
+        increases += 1
       else:
         print("please enter a number 1-5")
-      increases += 1
     calcStats()
     player.hp = player.maxhp
     print("You feel invigorated by your level up. Health restored!")
@@ -260,6 +264,8 @@ class monster:
     
 
  #First attempts at making a combat system, make dmg a variable thats set in classes and then modified based off of stats.Give weapons a strength to match weaknesses      
+ #Based on a combat system that I saw on stack overflow. Works a bit differently and is expanded but that's where I got the general form of it. 
+ #Potentially have weakness and resistance be dictionarys and use the check for key function with the input of the players dmg to check
 class combat:
   def __init__(self):
     calcStats()
@@ -582,7 +588,7 @@ def trollBridge():
   quit() 
 
 def trollFight ():
-  troll = monster('troll', 400, 12, ['Fire','Slashing'], Shield, 25)
+  troll = monster('troll', 400, 12, ['Fire','Slashing'], Shields, 25)
   actions = ["Climb down", "Enter the cave", "Pickup the mace"]
   currentCombat = combat()
   input("Press enter to continue ")
@@ -673,8 +679,8 @@ def longHallway():
       It's beginning to sound like you yourself are also laughing.
       """)
       if player.intelligence >= 18:
-        print("Thankfully because of your rigorous mental training you find yourself able to fight through the laughter and find your own mental voice.")
         print("""
+        Thankfully because of your rigorous mental training you find yourself able to fight through the laughter and find your own mental voice.
         You make out the text "Here, imprisoned, lies Krushok, Firstborn Tyrant of the Moon" underneath seems to be inscribed some kind of spell that you
         can copy down.
     
@@ -814,27 +820,98 @@ def cultGathering():
   quit()
 
 def cultistFight():
-  cultist = monster("cultist", 70, 15, Weapons, Shields, 15)
-  currentCombat = combat() 
+  cultist = monster("cultist", 70, 15, Weapons, Shields, 15) 
   numCultists = 2
   cultistsKilled = 0
   global ambush
   if ambush == True:
     numCultists = 3
-  while not currentCombat.gameOver:
-    currentCombat.newRound()
-    currentCombat.takeTurn(player,cultist)
-    currentCombat.monsterTurn(player,cultist)
-    currentCombat.displayResult(player,cultist)
-    currentCombat.checkWin(player,cultist)
-    input("Press enter to continue")
-  cultistsKilled += 1
+  while cultistsKilled < numCultists:
+    currentCombat = combat() 
+    while not currentCombat.gameOver:
+      currentCombat.newRound()
+      currentCombat.takeTurn(player,cultist)
+      currentCombat.monsterTurn(player,cultist)
+      currentCombat.displayResult(player,cultist)
+      currentCombat.checkWin(player,cultist)
+      input("Press enter to continue")
+    cultistsKilled += 1
   levelUp()
-  print("As you look around the small dungeon your fight with the vampire smashed the old chest, breaking whatever was inside. It looks like your only choice is to continue forward")
+  print("""
+  As you look around the small dungeon your fight with the vampire smashed the old chest, breaking whatever was inside. 
+  It looks like your only choice is to continue forward towards the deep echoing breath.
+  """)
   time.sleep(2)
   quit()
 
 def denOfTheBeast():
+  rightHead = monster("Golden head", 100 , 25, Weapons , Resistances, 15) 
+  leftHead = monster("Black head", 150, 15, Weapons, Resistances, 15)
+  krushok = monster("Krushok", 400, 30, None, None, 55)
+  actions = ["Left","Right"]
+  rightHeadDead = False
+  leftHeadDead = False
+  print(""" 
+  Upon entering the room you find yourself in what looks like a large ampitheater. You don't feel like you walked upwards at any
+  point, yet you're somehow on a mountaintop. Over the edges of the ampitheater you can see down into the valley where little towns speckle the hillsides.
+  In the middle of the ampitheater, illuminated by the light of the full moon, lies the source of the breathing. Shackles as large around as you
+  bind every limb of a creature you don't recognize. It almost looks like a cerberous but the body is too feline and the heads look almost draconic, something
+  about the lines of its face. Slightly more angular and rigid than they should be with smoke rising from the nostrils of the right head.
+  Everything about this creature reeks of unnatural magic. 
+
+  As you take one quiet step into the ampitheater you hear the grinding of stone behind you as the passageway seemingly closes of its own accord. 
+  Disturbed by the grinding the right head lazily opens its eyes predatory inquisition, revealing eyes comsumed by a golden iris with a slitted
+  pupil being the only break in the sheen. As the beast rises to its feat it creates almost no sound, save growl now emitting from the right head.
+  Hastily looking around the circular ampitheater you don't see a way out. Maybe because of the chains you could run it in a circle and fight only one head
+  but you have to choose quickly. Glancing at the approaching creature you see that its left head is completely blind, eyelids flicking over empty socket,
+  that being said it also looks physically stronger than the left head. 
+  """)
+  userInput = ""
+  def rightHeadFight():
+    currentCombat = combat()
+    while not currentCombat.gameOver:
+      currentCombat.newRound()
+      currentCombat.takeTurn(player,rightHead)
+      currentCombat.monsterTurn(player,rightHead)
+      currentCombat.displayResult(player,rightHead)
+      currentCombat.checkWin(player,rightHead)
+      input("Press enter to continue")
+      levelUp()
+    rightHeadDead = True 
+    if leftHeadDead == False:
+      print("Cutting the right head down causes the left to roar in agony and spit fire at you.")
+      time.sleep(2)
+      leftHeadFight()
+    else:
+      time.sleep(1)
+      krushok()
+  def leftHeadFight():
+    currentCombat = combat()
+    while not currentCombat.gameOver:
+      currentCombat.newRound()
+      currentCombat.takeTurn(player,leftHead)
+      currentCombat.monsterTurn(player,leftHead)
+      currentCombat.displayResult(player,leftHead)
+      currentCombat.checkWin(player,leftHead)
+      input("Press enter to continue")
+      levelUp()
+    rightLeftDead = True 
+    if rightHeadDead == False:
+      print("As the smoke from the left head dies the right head takes a deep breath through its nose. Picking up your scent it turns it's empty eyes to you.")
+      time.sleep(2)
+      rightHeadFight()
+    else:
+      time.sleep(1)
+      krushok()
+  def krushok():
+    
+    quit()
+  while userInput not in actions:
+
+    quit()
+
+
+
   quit()
 
 if __name__ == "__main__":
