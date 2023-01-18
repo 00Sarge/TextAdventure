@@ -144,7 +144,7 @@ def printStats():
 
   Constitution Modifier:{player.conModifier} -- Your constitution/10, multiplies into your max hp
 
-  Crit Multiplier:{player.critMultiplier} -- Your dexterity/5, increases your critical hit damage
+  Crit Multiplier:{player.critMultiplier} -- Your dexterity/5, increases your critical hit damage mildly increases likelihood
   """)
   
 
@@ -287,17 +287,20 @@ class combat:
   def takeTurn(self,player,opponent):
     roll = random.randint(1,20)
     self.playerDmg = 0 
+    roll += player.dexterity/5 
     if player.dmgType == opponent.weakness:
       print("Your dmg type seems particularly strong against this monster, roll + 5!")
-      roll += 5
+      roll += 5 
     if roll >= 20:
       print(f"You rolled a {roll} for attacking")
       self.playerDmg = (player.dmg + random.randint(1,10))*player.critMultiplier
+      self.playerDmg = round(self.playerDmg)
       opponent.hp = opponent.hp - self.playerDmg
       print("\033[1;31;40m POWER LEVELS OVER 9000!!!\033[0m")  
     elif roll >= 15:
       print(f"You rolled a {roll} for attacking")
       self.playerDmg = (player.dmg + random.randint(1,10))*(player.critMultiplier/2)
+      self.playerDmg = round(self.playerDmg)
       opponent.hp = opponent.hp - self.playerDmg
       print(f"Critical Hit!")
     elif roll < 10:
@@ -306,6 +309,7 @@ class combat:
     else:
       print(f"You rolled a {roll} for attacking")
       self.playerDmg = (player.dmg+ random.randint(1,10))
+      self.playerDmg = round(self.playerDmg)
       opponent.hp = opponent.hp - self.playerDmg
       print(f"You land a hit")
   def monsterTurn(self,player,opponent):
@@ -722,7 +726,8 @@ def dungeon():
   From further ahead you hear breath. Breath that echoes between the walls and leaves your mind feeling empty, a deep and primal rasp. Something is sleeping.
   """)
   while userInput not in actions:
-    userInput = input("Options: Help Prisoner/Investigate Chest/Continue Down") 
+    print("Options: Help Prisoner/Investigate Chest/Continue Down")
+    userInput = input() 
     if userInput == "Help Prisoner":
       prisonerOptions = ["Help with the manacles", "Leave him be"]
       prisonerInput = ""
@@ -757,8 +762,13 @@ def dungeon():
               player.hpPotions += 1
               chestUnlocked = True
               dungeon() 
+            else:
+              print("You don't have the tools or expertise to do that.")
+              input("Press enter to continue")
+              dungeon()
           else:
             print("The chest is already open, leave dweebus.")
+            input("Press enter to continue")
             dungeon()
         elif chestInput == "Smash it":
           if chestUnlocked == False:
