@@ -57,6 +57,7 @@ def levelUp():
         print("Wisdom + 2!")
       else:
         print("please enter a number 1-5")
+        increases -= 1 
       increases += 1
     calcStats()
     player.hp = player.maxhp
@@ -117,7 +118,8 @@ def printStats():
 
   Crit Multiplier:{player.critMultiplier} -- Your dexterity/5, multiplies your dmg on crits over 20
   """)
-  
+
+
 
 #Should allow players to select their class, altering their base stats and equipment.
 class char:
