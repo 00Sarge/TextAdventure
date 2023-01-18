@@ -904,8 +904,35 @@ def denOfTheBeast():
       time.sleep(1)
       krushok()
   def krushok():
+  # as you kill it the blood will flow out into the veins of what you now realize is an alter and then the moon cracks and Krushok comes out.
+    print("""
+    As you triumphantly stand over the defeated beast you feel a sense of dread seep into you. Blood draining from the wounds of the giant creature begins to 
+    flow into veins cut in the stone, revealing the acropolis for what it is, an altar. The now blood soaked veins in the stone begin to form a pattern and the moon
+    begins to glow red, cracks emerging in it that mimic the pattern in the altar. Before you can think to stop the bleeding the air is pulled from your lungs, drawn in
+    by some kind of incredible gravity, just before you begin to see the moon crumple. Meteors and debris begin falling from the sky around you just as the shockwave hits, knocking
+    you over just in time to see a small meteor hit the center of the altar, and stand up. 
     
-    quit()
+    Your mind travels back to your childhood fairy tales. Particularly one where the old gods chained an untameable evil inside the Moon to protect the Earth, Krushok.
+    Now free, the Firstborn Tyrant of the Moon stands over 30ft tall and in the middle of the acropolis. His bottom half is covered in opulescent white scales and is lean and
+    clawed like a dragon. His top half is gaunt from millenia of imprisonment but even with skin hugging the bones of his more human half he appears terrifyingly strong.
+    Eyes milky white and scarred over, huge tattered raven wings stolen from Odin's stock, and a wrath unlike any other, Krushok turns towards you. With a noise like inverted
+    thunder, pulling you in, Krushok summons a spear of pure moonlight and stalks towards you
+    """)
+    currentCombat = combat()
+    while not currentCombat.gameOver:
+      currentCombat.newRound()
+      currentCombat.takeTurn(player,krushok)
+      currentCombat.monsterTurn(player,krushok)
+      currentCombat.displayResult(player,krushok)
+      currentCombat.checkWin(player,krushok)
+      input("Press enter to continue")
+      levelUp()
+    print("""
+    With one final devastating blow you strike down the ancient god of death and bring peace to the Earth.
+    
+    If you got this far, congrats! Not only have you won but you have defied all my expectations and managed to beat the game.
+    """)
+
   while userInput not in actions:
 
     quit()
