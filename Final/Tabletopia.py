@@ -99,7 +99,7 @@ def calcStats():
     player.dmgType = player.weapon["dmgType"]
   elif player.race == "Rogue":
     player.dmg = 10 + player.dexterity + player.weapon["dmgBonus"]
-    player.dmgType = player.spell["dmgType"]
+    player.dmgType = player.weapon["dmgType"]
   elif player.race == "Wizard":
     player.dmg = 10 + player.intelligence + player.spell["dmgBonus"]
     player.dmgType = player.spell["dmgType"]
@@ -294,7 +294,7 @@ class combat:
       print(f"You rolled a {roll} for attacking")
       self.playerDmg = (player.dmg + random.randint(1,10))*player.critMultiplier
       opponent.hp = opponent.hp - self.playerDmg
-      print("\033[1;31;40m POWER LEVELS OVER 9000!!! \n")  
+      print("\033[1;31;40m POWER LEVELS OVER 9000!!!\033[0m")  
     elif roll >= 15:
       print(f"You rolled a {roll} for attacking")
       self.playerDmg = (player.dmg + random.randint(1,10))*(player.critMultiplier/2)
@@ -407,9 +407,10 @@ def ghoulGames():
         player.wisdom = player.wisdom + 2
         if player.wisdom < 18:
           print("A single door opens on the left wall of the room")
+          input("press enter to continue")
           longHallway()
         else:
-          print("While you do notice a door open to the left that seems to obvious a route for catacomb such as this.")
+          print("While you do notice a door open to the left that seems too obvious a route for catacomb such as this.")
           print("Your trained eyes, now heightened by the amulet, notice the seems of a small trapdoor below the ringmaster.")
           print("Unable to resist the same curiosity that brought you deep underground you slip into the hatch, barely able")
           print("to hear the ringmaster's cries of protest behind you")
@@ -699,6 +700,7 @@ def longHallway():
         player.wisdom = player.wisdom - 2
         player.intelligence = player.intelligence + 1
         player.hp = player.hp - 10
+        input("Press enter to continue")
         longHallway()
     elif userInput == "Turn and run":
       print("You turn and exit the way you came")
@@ -934,12 +936,15 @@ def denOfTheBeast():
     """)
 
   while userInput not in actions:
-
-    quit()
-
-
-
-  quit()
+    print("I looks like you'll have to fight the beast either way but if you circle it correctly you might be able to take it on one head at a time.")
+    print("Options: Right/Left")
+    userInput = input()
+    if userInput == "Left":
+      leftHeadFight()
+    elif userInput == "Right":
+      rightHeadFight()
+    else:
+      print("Please enter a valid option")
 
 if __name__ == "__main__":
     
