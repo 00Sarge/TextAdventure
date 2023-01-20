@@ -37,8 +37,12 @@ def checkForDead():
     pass
   elif player.hp <= 0:
     print("You Have Died")
-    time.sleep(3)
-    quit()
+    time.sleep(2)
+    userInput =  input("Play again? y/n")
+    if userInput == "y":
+      playeracterSelect()
+    else:
+      quit()
   else:
     pass
 
@@ -428,7 +432,7 @@ def ghoulGames():
 #First combat, player fights the ghoul and either dies or gains access to long hallway or treasure room
 
 def vsGhoul():
-  actions = ["Small trapdoor","Doorway"]
+  actions = ["s","d"]
   print("hohoho, I see you have chosen death, young adventurer.")
   ghoul = monster('ghoul', 225, 8, 'Fire', Resistance, 10 )
   currentCombat = combat() 
@@ -446,19 +450,19 @@ def vsGhoul():
   A small hatch pop open from underneath where the ghost died. You think you can see treasure down there but you're not too sure.
   You also notice a door off to the side that looks much less rewarding, but also much less ominous.
   """)
-  print("Options: Small trapdoor/Doorway ")
+  print("Options: (s)mall trapdoor/(d)oorway ")
   userInput = ""
   while userInput not in actions:
     userInput = input()
-    if userInput == "Doorway":
+    if userInput == "d":
       longHallway()
-    elif userInput == "Small trapdoor":
+    elif userInput == "s":
       treasureRoom()
     else:
       print("please enter a valid option")
    
 def treasureRoom():
-  actions = ["Take sword", "Take armor", "Take wand"]
+  actions = ["s", "a", "w"]
   print("""
   As you duck down into the trapdoor you're greeted by luminescent piles of gold, amongst which you spy 
   multiple magic weapons. You get the feeling that these are powerful enough that you can probably only handle using one of them.
@@ -467,9 +471,9 @@ def treasureRoom():
   """)
   userInput = ""
   while userInput not in actions:
-    userInput = input("Options: Take sword/Take armor/Take wand")
-    ending = "Taking your newfound item you travel through a plain wood door at the end of the room, deeper into the catacombs."
-    if userInput == "Take sword":
+    userInput = input("Options: take (s)word/take (a)rmor/take (w)and")
+    ending = "Taking your newfound item the others disapear and you travel through a plain wood door at the end of the room, deeper into the catacombs."
+    if userInput == "s":
       print("""
       As you grasp the hilt the hilt of the black stone blade you feel infernal strength race through you. You feel both stronger and as though you 
       would take less damage from fire.
@@ -481,7 +485,7 @@ def treasureRoom():
       calcStats()
       print(ending)
       dungeon() 
-    elif userInput == "Take armor":
+    elif userInput == "a":
       print(""" 
       Picking up the heavy suit of armor feels like a momentous task, let alone donning it. Thankfully, after some manuevering you manage to get it on
       you definately feel like regardless of whats attacking you this will help prevent damage.  
@@ -489,7 +493,7 @@ def treasureRoom():
       player.dmgStop = 5
       print(ending)
       dungeon()
-    elif userInput == "Take wand":
+    elif userInput == "w":
       print(""" 
       As you pick up the wand you feel a jolt of electricity course through you, your senses seem to be moving faster. 
       or at least everything else seems slower. Your magic feels more powerful as well  
