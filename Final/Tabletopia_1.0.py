@@ -18,16 +18,16 @@ Tools = {}
 Shields = {}
 Resistances = {}
 Weapons["Fist"] = {"Name": "Fist", "dmgBonus": 2, "dmgType": "Bludgeoning"}
-Weapons["BatFist"] = {"Name": "BatFist", "dmgBonus": 20, "dmgType": "Kill"}
+Weapons["BatFist"] = {"Name": "BatFist", "dmgBonus": 50, "dmgType": "Kill"}
 Weapons["TrollMace"] = {"Name": "TrollMace", "dmgBonus": 20, "dmgType": "Bludgeoning"}
 Weapons["Longsword"] = {"Name": "Longsword","dmgBonus": 5, "dmgType": "Slashing"}
 Weapons["Warhammer"] = {"Name": "Warhammer","dmgBonus": 5, "dmgType": "Bludgeoning"}
 Weapons["Spear"] = {"Name": "Spear","dmgBonus": 5, "dmgType": "Piercing"}
 Weapons["ObsidianEdge"] = {"Name": "Obsidian edge","dmgBonus": 15, "dmgType": ["Slashing", "Fire"]}
-Spells["Fireball"] = {"Name": "Fire ball","dmgBonus": 8, "dmgType": "Fire"}
-Spells["IceStorm"] = {"Name": "Ice storm","dmgBonus": 8, "dmgType": "Cold"}
-Spells["LightningBolt"] = {"Name": "Lightning bolt","dmgBonus": 12, "dmgType": "Lightning"}
-Spells["EclipticBeam"] = {"Name": "Ecliptic beam","dmgBonus": 30, "dmgType": "Dark"}
+Spells["Fireball"] = {"Name": "Fire ball","dmgBonus": 10, "dmgType": "Fire"}
+Spells["IceStorm"] = {"Name": "Ice storm","dmgBonus": 10, "dmgType": "Cold"}
+Spells["LightningBolt"] = {"Name": "Lightning bolt","dmgBonus": 15, "dmgType": "Lightning"}
+Spells["EclipticBeam"] = {"Name": "Ecliptic beam","dmgBonus": 35, "dmgType": "Dark"}
 Spells["NoMagic"] = {"Name": "No Magic for you", "dmgBonus": 2, "dmgType": "Bad"}
 
 def checkForDead():
@@ -140,14 +140,13 @@ def printStats():
 
   Damage Stop:{player.dmgStop} -- Blocks a flat amount of damage, provided by advanced defensive items
 
-  Damage Bonus:{player.dmgBonus} -- Additional damage added onto your base before calculations, added by your weapon
+  Damage Bonus:{player.dmgBonus} -- Additional damage added onto your base before calculations, added by your weapon or spell
 
   Constitution Modifier:{player.conModifier} -- Your constitution/10, multiplies into your max hp
 
   Crit Multiplier:{player.critMultiplier} -- Your dexterity/5, increases your critical hit damage mildly increases likelihood
   """)
   
-
 #Should allow players to select their class, altering their base stats and equipment.
 class char:
     def __init__(self, race, name, hp, strength, dexterity, constitution, intelligence, wisdom,):
@@ -262,7 +261,6 @@ class monster:
     def __str__(self):
         return f"{self.name}{self.weakness}{self.blockedBy}()"
     
-
  #First attempts at making a combat system, make dmg a variable thats set in classes and then modified based off of stats.Give weapons a strength to match weaknesses      
  #Based on a combat system that I saw on stack overflow. Works a bit differently and is expanded but that's where I got the general form of it. 
  #Potentially have weakness and resistance be dictionarys and use the check for key function with the input of the players dmg to check
@@ -338,52 +336,46 @@ class combat:
       print(f"{opponent.name} attacked {player.name} they dealt {self.opponentDmg} dmg")
       print(f"{opponent.name} hp:{opponent.hp}")
       print(f"{player.name} hp:{player.hp}")
-      
-    
-  
-  
-
     
 def playeracterSelect():
   print("Let's start with your name: ") 
   name = input()  
   print("Good luck, " +name+ ".")  
-  classes = ["Warrior","Rogue","Wizard"]
+  classes = ["w","r","z"]
   print("Next we'll need your class. What kind of adventure are you?")
   userInput = ""
   global player
   player = ()
   while userInput not in classes:
-    print("Options: Rogue/Warrior/Wizard")
+    print("Options: (r)ogue/(w)arrior/wi(z)ard")
     userInput = input()
-    if userInput == "Rogue":
+    if userInput == "r":
       player = char('Rogue', name, 100, 10, 18, 12, 14, 16)
       player.selectThings()
       playerStart()
-    elif userInput == "Wizard":
+    elif userInput == "z":
       player = char('Wizard', name, 75, 8, 10, 10, 22, 14)
       player.selectThings()
       playerStart()
-    elif userInput == "Warrior":
+    elif userInput == "w":
       player = char('Warrior', name, 125, 18, 14, 14, 8, 10) 
       player.selectThings()
       playerStart()
     else: 
       print("Please enter a valid option.")
 
-
 def playerStart():
-  actions = ["Left","Right","Forward"]
+  actions = ["l","r","f"]
   print("You begin in a dusty room made of cobbled stone. There are 3 paths.")
   userInput = ""
   while userInput not in actions:
-    print("Options: Left/Right/Forward")
+    print("Options: (l)eft/(r)ight/(f)orward")
     userInput = input()
-    if userInput == "Forward":
+    if userInput == "f":
       ghoulGames()
-    elif userInput == "Right":
+    elif userInput == "r":
       longHallway()
-    elif userInput == "Left":
+    elif userInput == "l":
       trollBridge()
     else: 
       print("Please enter a valid option.")
@@ -393,16 +385,16 @@ def playerStart():
 #upon completeing the games playeracters with a high wis stat can find a secret room
     
 def ghoulGames():
-  actions = ["Play along","Fight the ghoul","Turn and run"]
+  actions = ["p","f","t"]
   print("Welcome young",player.race,"to the Ghoul Games. Announces an undead ringmaster")
   print("To escape my room you must prove your worth in my obstacle course")
   userInput = ""
   while userInput not in actions:
-    print("Options: Play along/Fight the ghoul/Turn and run")
+    print("Options: (p)lay along/(f)ight the ghoul/(t)urn and run")
     userInput = input()
-    if userInput == "Fight the ghoul":
+    if userInput == "f":
       vsGhoul() 
-    elif userInput == "Play along":
+    elif userInput == "p":
       if player.dexterity >= 16 or player.strength >= 16:
         print("Thanks to your athletcism you manage to duck, dodge, and weave through the obstacles")
         print("'Well done young ",player.race," take this amulet as a testament to your feat' exclaims the Ringmaster before vanishing into a mist")
@@ -427,7 +419,7 @@ def ghoulGames():
         player.hp = player.hp - 15
         checkForDead()
         vsGhoul() 
-    elif userInput == "Turn and run":
+    elif userInput == "t":
       print("You find the door has slammed closed behind you")
       ghoulGames()
     else: 
@@ -512,9 +504,9 @@ def treasureRoom():
     quit()
   
 def trollBridge():
-  actions = ["Answer the riddle","Fight the troll","Turn back", "Jump across"]
+  actions = ["a","f","t", "j"]
   print("""
-  As you wander through the tunnels you reach a wide chamber with a large chasm nearly 20 ft across crossing through it, thankfully there's a well built stone bridge crossing it.
+  As you wander the tunnels you find and step through a door into large chamber with a chasm nearly 20 ft across in the middle, thankfully there's a well built stone bridge crossing it.
   The only issue is that there's a lorge troll standing in the middle of the bridge, munching on an apple. 'Why hello there little one, you must want to be exploring of the dungeon, yes? 
   I'm sorry to say that I only let people who answer my riddle pass' declares the troll. 
   While he doesn't seem particularly hostile the troll is quite large and has what appears to be a large mace sitting next to him. 
@@ -522,9 +514,9 @@ def trollBridge():
 
   userInput = ""
   while userInput not in actions:
-    print("Options: Answer/Fight/Turn back/Jump across")
+    print("Options: (a)nswer/(f)ight/(t)urn back/(j)ump across")
     userInput = input()
-    if userInput == "Answer":
+    if userInput == "a":
       print("""'Ohh yes, this is very good, it's been a long time since something so living and fleshy wanted to talk to me. Here's the riddle:
       My life can be measured in hours,
 
@@ -562,7 +554,7 @@ def trollBridge():
       print("Player intelligence + 2!")
       input("press enter to continue")
       cultGathering() 
-    elif userInput == "Jump across":
+    elif userInput == "j":
       print("You decide that you'd rather trust your own athleticism than the word of a troll or his bridge")
       if player.strength >= 20 or player.dexterity >= 20:
         print("You make a running jump and manage to sail over the chasm. Tucking into a roll on the other side you rapidly pop to your feet.")
@@ -581,10 +573,10 @@ def trollBridge():
         print("Thankfully you were in good enough shape to survive the fall. You slowly come to crumpled in the dark on cobbles wet with your blood")
         time.sleep(2)
         dungeon()
-    elif userInput == "Fight":
+    elif userInput == "f":
       print("You draw your breath and prepare for battle hopeing to get the first strike in before the eventual battle.")
       trollFight()
-    elif userInput == "Turn back":
+    elif userInput == "t":
       print("You find the door has slammed closed behind you")
       trollBridge()
     else: 
@@ -594,7 +586,7 @@ def trollBridge():
 
 def trollFight ():
   troll = monster('troll', 400, 12, ['Fire','Slashing'], Shields, 25)
-  actions = ["Climb down", "Enter the cave", "Pickup the mace"]
+  actions = ["c", "e", "p"]
   currentCombat = combat()
   input("Press enter to continue ")
   while not currentCombat.gameOver:
@@ -613,9 +605,9 @@ def trollFight ():
   """)
   userInput = ""
   while userInput not in actions:
-    print("Options: Climb down/Enter the cave/Pickup the mace")
+    print("Options: (c)limb down/(e)nter the cave/(p)ickup the mace")
     userInput = input()
-    if userInput == "Climb down":
+    if userInput == "c":
       if player.dexterity >= 20 or player.strength >= 24:
         print("You nimbly wind your way down the threadbare rope into the darkness")
         dungeon()
@@ -626,17 +618,17 @@ def trollFight ():
         print("Unfortunately your hands slip and you lose grip on the rope, tumbling into the dark.")
         player.hp = player.hp - 30
         dungeon()
-    elif userInput == "Enter the cave":
+    elif userInput == "e":
       cultGathering()
-    elif userInput == "Pickup the mace":
+    elif userInput == "p":
       if player.strength >= 22:
         print("Thanks to your absolute immensity you manage to heave the mace over your shoulder. This thing probably deals some serious damage")
         player.weapon = Weapons["TrollMace"]
-        print("Options: Climb down/Enter the cave")
+        print("Options: (c)limb down/(e)nter the cave")
         playerAnswer = input()
-        if playerAnswer == "Climb down":
+        if playerAnswer == "c":
           dungeon()
-        elif playerAnswer == "Enter the cave":
+        elif playerAnswer == "e":
           cultGathering()
         else:
           print("please enter a valid option")
@@ -646,37 +638,35 @@ def trollFight ():
     else:
       print("please enter a valid option")
 
-
 def longHallway(): 
-  system('cls')
-  actions = ["Approach the door","Investigate the walls","Turn and run"]
+  actions = ["a","i","t"]
   print("You step into a long hallway, dimly lit and dank. The walls seems to covered in a scrawl that looks like a language, though not one that you know")
   print("At the end of the hallway you see a tall door carved of ebony.")
   print("The door is covered in latches and locks on your side... meaning there must have been, or may still be, something trapped in there")
   userInput = ""
   while userInput not in actions:
-    print("Options: Approach the Door/Investigate the walls/Turn and run")
+    print("Options: (a)pproach the door/(i)nvestigate the walls/(t)urn and run")
     userInput = input()
-    if userInput == "Approach the door":
+    if userInput == "a":
       print("""
       As you walk down the hallway you can't help but feel like the air clings to you in an unnatural way,
       making the air itself feel thick and oily. Upon reaching the door you realize it's even larger than you initially thought.
       The door is easily over 9ft tall and the locks are rusted over. Theres a series of claw marks on the sarrounding floor and walls. 
       """)
-      print("Options: Open the door/Back away")
-      choices = ["Open the door","Back away"]
+      print("Options: (o)pen the door/(b)ack away")
+      choices = ["o","b"]
       choice = input()
       while choice not in choices:
-        if choice == "Open the door":
+        if choice == "o":
           print("You slowly unlock the old rusty locks, grinding the bolts in their grooves. The tall door swings open with an unnatural silence.")
           denOfTheBeast()
-        elif choice == "Back away":
+        elif choice == "b":
           longHallway()
         else:
           print("please enter a valid option")
       
 
-    elif userInput == "Investigate the walls":
+    elif userInput == "i":
       print("""
       As you approach the wall you begin to hear whispering from the edges of your vision, 
       it's almost as though some unseen force is laughing at you. Now that the writing comes into focus it takes
@@ -706,7 +696,7 @@ def longHallway():
         player.hp = player.hp - 10
         input("Press enter to continue")
         longHallway()
-    elif userInput == "Turn and run":
+    elif userInput == "t":
       print("You turn and exit the way you came")
       playerStart()
     else:
@@ -716,7 +706,7 @@ def longHallway():
 ## toD0 - Make list of weapons into a dictionary so I can jsut add new weapons with new types whenever and have it be easier(done)
 ## toDo - made weaknesses into a list instead of just one input. see if that breaks everything??(It sort of does)
 def dungeon():
-  actions = ["Help Prisoner", "Investigate Chest", "Continue Down"]
+  actions = ["h", "i", "c"]
   chestUnlocked = False
   userInput = ""
   print(""" 
@@ -726,36 +716,36 @@ def dungeon():
   From further ahead you hear breath. Breath that echoes between the walls and leaves your mind feeling empty, a deep and primal rasp. Something is sleeping.
   """)
   while userInput not in actions:
-    print("Options: Help Prisoner/Investigate Chest/Continue Down")
+    print("Options: (h)elp prisoner/(i)nvestigate chest/(c)ontinue down")
     userInput = input() 
-    if userInput == "Help Prisoner":
-      prisonerOptions = ["Help with the manacles", "Leave him be"]
+    if userInput == "h":
+      prisonerOptions = ["h", "l"]
       prisonerInput = ""
       while prisonerInput not in prisonerOptions:
         print(""" You cross the hallway and approach the groaning prisoner. He dangles by locked iron manacles "Oh, hello there. Is that someone? It's been so long
         I can hardly see anymore." he creaks. "Will you help me?" """)
         if player.wisdom >= 18:
           print("As you listen to the man you get an eery feeling from him. Some part of this individual seems coiled to strike.")
-        prisonerInput = input("Options: Help with the manacles/Leave him be ")  
-        if prisonerInput == "Help with the manacles":
+        prisonerInput = input("Options: (h)elp with the manacles/(l)eave him be ")  
+        if prisonerInput == "h":
           print(""""As you approach the prisoner he cackles "Bahah, someone is a bit too trusting." The manacles detach from the walls, elongating, shifting, and hardening
           until they ressemble spikes made of bone prottruding from the forearms of the prisoner. With teeth now bared to reveal large fangs, the vampire lunges. 
           """)
           vampireFight()
-        elif prisonerInput == "Leave him be":
+        elif prisonerInput == "l":
           print(""" "Wait, wait, are you just leaving me? I can help you! You'll never live if you go alone!" """)
           dungeon()
         else:
           print("please enter a valid option")
-    elif userInput == "Investigate Chest":
+    elif userInput == "i":
       chestInput = ""
-      chestOptions = ["Smash it","Pick Lock","Turn Away"]
+      chestOptions = ["s","p","t"]
       while chestInput not in chestOptions:
         print("As you stand in front of the chest it appears to be mildly rotten but it ")
-        chestInput = input("Options: Pick Lock/Smash it/Turn away")
-        if chestInput == "Turn away":
+        chestInput = input("Options: (p)ick lock/(s)mash it/(tu)rn away")
+        if chestInput == "t":
           dungeon()
-        elif chestInput == "Pick Lock":
+        elif chestInput == "p":
           if chestUnlocked == False:
             if player.tool == Tool["Lockpick"]:
               print("You succesfully open the chest and pull out a small ornate crystalline bottle filled with a viscous red fluid inside. This health potion will save you from death once")
@@ -770,7 +760,7 @@ def dungeon():
             print("The chest is already open, leave dweebus.")
             input("Press enter to continue")
             dungeon()
-        elif chestInput == "Smash it":
+        elif chestInput == "s":
           if chestUnlocked == False:
             if player.strength >= 20:
               print("""Using your massive muscles you tear the chest in twain. Unfortunately you seem to have broken th small bottle that was in the chest.""")
@@ -782,7 +772,7 @@ def dungeon():
           else:
             print("The chest is already in pieces.")
             dungeon()
-    elif userInput == "Continue Down":
+    elif userInput == "c":
       print("As you slowly walk down the corridor, away from the pleas of the prisoner, you feel an unnatural cold wash over you and hear chanting ahead.")
       cultGathering()
     else:
@@ -805,18 +795,18 @@ def vampireFight():
   cultGathering()
 
 def cultGathering():
-  actions = ["Sneak around","Ambush them"]
+  actions = ["s","a"]
   print("""
         As you walk down the hallway you begin to hear eerie voices chanting. Rounding the corner you see 3 cultists standing around a pile of dead sheep.
         It looks like you might be able to sneak around them, but at the same time you get a bad feeling about what would happen if they completed their ritual.
          """)
   userInput = ""
   while userInput not in actions:
-    print("Options: Sneak around/Ambush them")
+    print("Options: (s)neak around/(a)mbush them")
     global ambushed 
     ambushed = False
     userInput = input()
-    if userInput == "Sneak around":
+    if userInput == "s":
       if player.dexterity >= 16:
         print("""You successfully stalk around the room, as you sneak through the passageway at the end of the room you get a sinking feeling in your stomach""")
         denOfTheBeast()
@@ -824,7 +814,7 @@ def cultGathering():
         print("You attempt to sneak around the room but unfortunately you stumble and alert the cultists who quickly draw daggers and charge you.")
         ambushed = True 
         cultistFight() 
-    elif userInput == "Ambush them":
+    elif userInput == "a":
       print("Rushing right in you manage to get the drop on one of the cultists, killing him, before the other two draw their daggers and turn towards you.")
       cultistFight()
     else: 
@@ -833,11 +823,11 @@ def cultGathering():
 
 def cultistFight():
   cultist = monster("cultist", 70, 15, Weapons, Shields, 15) 
-  numCultists = 2
+  numCultists = 3
   cultistsKilled = 0
   global ambush
   if ambush == True:
-    numCultists = 3
+    numCultists = 2
   while cultistsKilled < numCultists:
     currentCombat = combat() 
     while not currentCombat.gameOver:
@@ -860,7 +850,7 @@ def denOfTheBeast():
   rightHead = monster("Golden head", 100 , 25, Weapons , Resistances, 15) 
   leftHead = monster("Black head", 150, 15, Weapons, Resistances, 15)
   krushok = monster("Krushok", 400, 30, None, None, 55)
-  actions = ["Left","Right"]
+  actions = ["l","r"]
   rightHeadDead = False
   leftHeadDead = False
   print(""" 
@@ -947,11 +937,11 @@ def denOfTheBeast():
 
   while userInput not in actions:
     print("I looks like you'll have to fight the beast either way but if you circle it correctly you might be able to take it on one head at a time.")
-    print("Options: Right/Left")
+    print("Options: (r)ight/(l)eft")
     userInput = input()
-    if userInput == "Left":
+    if userInput == "l":
       leftHeadFight()
-    elif userInput == "Right":
+    elif userInput == "l":
       rightHeadFight()
     else:
       print("Please enter a valid option")
