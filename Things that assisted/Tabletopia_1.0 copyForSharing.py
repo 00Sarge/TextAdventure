@@ -32,11 +32,10 @@ def checkForDead():
   if player.hp <= 0 and player.hpPotions > 0:
     print("Thankfully just as you're about to fall you manage take a swig of that potion you found. Returning some hp.")
     player.hp = player.hp + .5 * player.maxhp
-    pass
   elif player.hp <= 0:
     print("You Have Died")
-    time.sleep(2)
-    userInput =  input("Play again? y/n")
+    print("Play again? y/n")
+    userInput =  input()
     if userInput == "y":
       playeracterSelect()
     else:
@@ -429,7 +428,7 @@ def ghoulGames():
 #First combat, player fights the ghoul and either dies or gains access to long hallway or treasure room
 
 def vsGhoul():
-  actions = ["Small trapdoor","Doorway"]
+  actions = ["t","d"]
   print("hohoho, I see you have chosen death, young adventurer.")
   ghoul = monster('ghoul', 225, 8, 'Fire', Resistance, 10 )
   currentCombat = combat() 
@@ -447,19 +446,19 @@ def vsGhoul():
   A small hatch pop open from underneath where the ghost died. You think you can see treasure down there but you're not too sure.
   You also notice a door off to the side that looks much less rewarding, but also much less ominous.
   """)
-  print("Options: Small trapdoor/Doorway ")
+  print("Options: small (t)rapdoor/(d)oorway ")
   userInput = ""
   while userInput not in actions:
     userInput = input()
-    if userInput == "Doorway":
+    if userInput == "d":
       longHallway()
-    elif userInput == "Small trapdoor":
+    elif userInput == "t":
       treasureRoom()
     else:
       print("please enter a valid option")
    
 def treasureRoom():
-  actions = ["Take sword", "Take armor", "Take wand"]
+  actions = ["s", "a", "w"]
   print("""
   As you duck down into the trapdoor you're greeted by luminescent piles of gold, amongst which you spy 
   multiple magic weapons. You get the feeling that these are powerful enough that you can probably only handle using one of them.
@@ -468,9 +467,9 @@ def treasureRoom():
   """)
   userInput = ""
   while userInput not in actions:
-    userInput = input("Options: Take sword/Take armor/Take wand")
+    userInput = input("Options: Take (s)word/Take (a)rmor/Take (w)and")
     ending = "Taking your newfound item you travel through a plain wood door at the end of the room, deeper into the catacombs."
-    if userInput == "Take sword":
+    if userInput == "s":
       print("""
       As you grasp the hilt the hilt of the black stone blade you feel infernal strength race through you. You feel both stronger and as though you 
       would take less damage from fire.
@@ -482,7 +481,7 @@ def treasureRoom():
       calcStats()
       print(ending)
       dungeon() 
-    elif userInput == "Take armor":
+    elif userInput == "a":
       print(""" 
       Picking up the heavy suit of armor feels like a momentous task, let alone donning it. Thankfully, after some manuevering you manage to get it on
       you definately feel like regardless of whats attacking you this will help prevent damage.  
@@ -490,7 +489,7 @@ def treasureRoom():
       player.dmgStop = 5
       print(ending)
       dungeon()
-    elif userInput == "Take wand":
+    elif userInput == "w":
       print(""" 
       As you pick up the wand you feel a jolt of electricity course through you, your senses seem to be moving faster. 
       or at least everything else seems slower. Your magic feels more powerful as well  
@@ -502,7 +501,6 @@ def treasureRoom():
       dungeon()
     else:
       print("please enter a valid option")
-    quit()
   
 def trollBridge():
   actions = ["a","f","t", "j"]
@@ -539,15 +537,16 @@ def trollBridge():
       print("So anyways, I will need an answer if imma let you pass. Because it's been s long since I've seen anyone I'll give you 3 tries(answer in lowercase)")
       while answer not in playerAnswer:
         print(f"You have {3 - attempts} remaining little one")
+        playerAnswer = input()
+        if answer not in playerAnswer:
+          print("Sorry, but that's not it")
+          attempts += 1 
         if attempts == 2:
           print("you have one more try, make it a good one ")
         elif attempts == 3:
           print("Oh well, we can't all be as smart as me I suppose")
           trollFight()
-        if answer not in playerAnswer:
-          print("Sorry, but that's not it")
-          attempts += 1 
-        playerAnswer = input()
+        
 ## toDo - Make an option to double down for a reward
       print(f"'Oh excellent, so well done little {player.race}. Here, you may cross my bridge' the troll steps aside and lets you pass")
       print("As you turn away from the troll and continue down the passage the air thickens and you think you hear voices ahead")
@@ -582,8 +581,8 @@ def trollBridge():
       trollBridge()
     else: 
       print("Please enter a valid option.")
-    quit()
-  quit() 
+      trollBridge()
+    
 
 def trollFight ():
   troll = monster('troll', 400, 12, ['Fire','Slashing'], Shields, 25)
@@ -823,14 +822,14 @@ def cultGathering():
   quit()
 
 def cultistFight():
-  cultist = monster("cultist", 70, 15, Weapons, Shields, 15) 
   numCultists = 3
   cultistsKilled = 0
-  global ambush
-  if ambush == True:
+  global ambushed
+  if ambushed == True:
     numCultists = 2
   while cultistsKilled < numCultists:
     currentCombat = combat() 
+    cultist = monster("cultist", 70, 15, Weapons, Shields, 15)
     while not currentCombat.gameOver:
       currentCombat.newRound()
       currentCombat.takeTurn(player,cultist)
@@ -839,13 +838,14 @@ def cultistFight():
       currentCombat.checkWin(player,cultist)
       input("Press enter to continue")
     cultistsKilled += 1
-  levelUp()
+    print("One down")
+    levelUp()
   print("""
-  As you look around the small dungeon your fight with the vampire smashed the old chest, breaking whatever was inside. 
-  It looks like your only choice is to continue forward towards the deep echoing breath.
-  """)
-  time.sleep(2)
-  quit()
+        Standing over the bodies of the cultists you're drawn deeper into the dungeon towards the breathing.
+        """)
+  input("Press enter to continue")
+  denOfTheBeast()
+  
 
 def denOfTheBeast():
   rightHead = monster("Golden head", 100 , 25, Weapons , Resistances, 15) 
@@ -857,7 +857,8 @@ def denOfTheBeast():
   print(""" 
   Upon entering the room you find yourself in what looks like a large ampitheater. You don't feel like you walked upwards at any
   point, yet you're somehow on a mountaintop. Over the edges of the ampitheater you can see down into the valley where little towns speckle the hillsides.
-  In the middle of the ampitheater, illuminated by the light of the full moon, lies the source of the breathing. Shackles as large around as you
+  In the middle
+  of the ampitheater, illuminated by the light of the full moon, lies the source of the breathing. Shackles as large around as you
   bind every limb of a creature you don't recognize. It almost looks like a cerberous but the body is too feline and the heads look almost draconic, something
   about the lines of its face. Slightly more angular and rigid than they should be with smoke rising from the nostrils of the right head.
   Everything about this creature reeks of unnatural magic. 
@@ -918,7 +919,7 @@ def denOfTheBeast():
     Your mind travels back to your childhood fairy tales. Particularly one where the old gods chained an untameable evil inside the Moon to protect the Earth, Krushok.
     Now free, the Firstborn Tyrant of the Moon stands over 30ft tall and in the middle of the acropolis. His bottom half is covered in opulescent white scales and is lean and
     clawed like a dragon. His top half is gaunt from millenia of imprisonment but even with skin hugging the bones of his more human half he appears terrifyingly strong.
-    Eyes milky white and scarred over, huge tattered raven wings stolen from Odin's stock, and a wrath unlike any other, Krushok turns towards you. With a noise like inverted
+    Eyes milky white and scarred over, flexing his huge tattered raven wings stolen from Odin's stock, and a wrath unlike any other, Krushok turns towards you. With a noise like inverted
     thunder, pulling you in, Krushok summons a spear of pure moonlight and stalks towards you
     """)
     currentCombat = combat()
